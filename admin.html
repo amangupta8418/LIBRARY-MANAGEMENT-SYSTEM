@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Executive Terminal - LMS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body.admin-bg {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top right, rgba(45, 12, 70, 0.45) 0%, rgba(3, 8, 22, 0.96) 75%),
+                  url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1920&q=85') no-repeat center center fixed;
+      background-size: cover;
+      overflow-x: hidden;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .layout-frame { display: flex; min-height: 100vh; }
+    
+    .side-nav { 
+      width: 280px; 
+      background: rgba(4, 10, 26, 0.94); 
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(179, 102, 255, 0.35); 
+      padding: 24px 16px; 
+      position: sticky; 
+      top: 0; 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      overflow-y: auto;
+    }
+
+    .admin-brand-title {
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ff007f, #b366ff, #00f2fe, #ff007f);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: adminBrandShift 5s ease infinite;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @keyframes adminBrandShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .main-viewport { flex: 1; padding: 26px 36px; overflow-y: auto; }
+    .admin-tab-section { display: none; }
+    .admin-tab-section.active-tab { display: block; animation: tabFadeIn 0.35s ease-in-out; }
+    @keyframes tabFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .admin-nav-btn {
+      width: 100%;
+      justify-content: flex-start;
+      background: rgba(255, 255, 255, 0.03);
+      color: #a0aec0;
+      font-family: 'Rajdhani', sans-serif !important;
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      transition: all 0.25s ease;
+      text-align: left;
+    }
+    .admin-nav-btn:hover { background: rgba(179, 102, 255, 0.15); color: #fff; transform: translateX(3px); }
+    .admin-nav-btn.active-btn {
+      background: linear-gradient(135deg, #7928ca, #b366ff) !important;
+      color: #fff !important;
+      font-weight: 800;
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 20px rgba(179, 102, 255, 0.5);
+    }
+
+    .glass-box-admin {
+      background: rgba(4, 12, 32, 0.88);
+      backdrop-filter: blur(25px);
+      border-radius: 18px;
+      border: 1px solid rgba(179, 102, 255, 0.3);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8);
+    }
+    .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-top: 15px; }
+    .student-card { 
+      background: rgba(5, 15, 42, 0.92); 
+      border: 1px solid rgba(179, 102, 255, 0.25); 
+      border-radius: 14px; 
+      padding: 16px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 7px; 
+      font-size: 13px; 
+    }
+    .info-line { display: flex; justify-content: space-between; color: var(--text-muted); }
+    .info-line strong { color: #fff; }
+
+    .btn-admin-glow {
+      background: linear-gradient(135deg, #7928ca, #ff007f);
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="admin-bg">
+
+<div class="layout-frame">
+  
+  <aside class="side-nav">
+    <div>
+      <h2 class="admin-brand-title">
+        <i class="fa-solid fa-microchip" style="color: #b366ff;"></i> LMS ADMIN CORE
+      </h2>
+      <nav id="navMenu" style="display: flex; flex-direction: column; gap: 7px; margin-top: 20px;">
+        <button class="admin-nav-btn active-btn" onclick="openAdminTab('adminProfilesSec', this)">
+          <i class="fa-solid fa-user-shield" style="color: #ffca28;"></i> 1. Admin Biometrics
+        </button>
+        <button class="admin-nav-btn" onclick="openAdminTab('studentsSec', this)">
+          <i class="fa-solid fa-users" style="color: #00f2fe;"></i> 2. Students Records
+        </button>
+        <button class="admin-nav-btn" onclick="openAdminTab('booksSec', this)">
+          <i class="fa-solid fa-book" style="color: #4cd964;"></i> 3. Book Inventory & DBMS
+        </button>
+        <button class="admin-nav-btn" onclick="openAdminTab('circulationSec', this)">
+          <i class="fa-solid fa-layer-group" style="color: #b366ff;"></i> 4. FIFO / LIFO Monitor
+        </button>
+        <button class="admin-nav-btn" onclick="openAdminTab('studentFeesSec', this)">
+          <i class="fa-solid fa-receipt" style="color: #ff5277;"></i> 5. Students FEEs & Fines
+        </button>
+        <button class="admin-nav-btn" onclick="openAdminTab('membershipSec', this)">
+          <i class="fa-solid fa-id-card" style="color: #ff77a9;"></i> 6. Memberships & Offers
+        </button>
+        <button class="admin-nav-btn" onclick="openAdminTab('noticeSec', this)">
+          <i class="fa-solid fa-bullhorn" style="color: #00ff87;"></i> 7. Notices Panel
+        </button>
+        <button class="admin-nav-btn" onclick="openAdminTab('lmsActivitySec', this)">
+          <i class="fa-solid fa-clock-rotate-left" style="color: #60efff;"></i> 8. LMS Activity Logs
+        </button>
+        <button class="admin-nav-btn" onclick="openAdminTab('complaintsSec', this)">
+          <i class="fa-solid fa-headset" style="color: #ff3b30;"></i> 9. Grievance Desk
+        </button>
+      </nav>
+    </div>
+
+    <div style="margin-top:auto; padding-bottom:12px;">
+      <button class="btn btn-danger" style="width: 100%; font-weight:700;" onclick="sessionStorage.clear(); window.location.href='index.html';">
+        <i class="fa-solid fa-power-off"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-viewport">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;">
+      <div>
+        <h1 style="font-family:'Orbitron', sans-serif; font-size:22px; color:#fff;">Executive Control Management</h1>
+        <p style="color:#a0aec0; font-size:13px; font-family:'Rajdhani', sans-serif;">Biometric permission control, real-time fee tracking & DBMS catalogs.</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-admin-glow" onclick="openStudentModal()"><i class="fa-solid fa-user-plus"></i> + Add Student</button>
+        <button class="btn btn-primary" style="background:linear-gradient(135deg,#0072ff,#00f2fe);" onclick="openBookModal()"><i class="fa-solid fa-book-medical"></i> + Add Book</button>
+      </div>
+    </div>
+
+    <!-- TAB 1: ADMIN BIOMETRICS -->
+    <section id="adminProfilesSec" class="admin-tab-section active-tab">
+      <div class="glass-box-admin" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <div>
+            <h3 style="color:#ffca28;"><i class="fa-solid fa-user-shield"></i> Multi-Admin Biometrics Registry</h3>
+            <p style="color:var(--text-muted); font-size:12.5px;">All enrolled administrators with face profiles, editable credentials, and active permissions.</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="loadAdminProfiles(this)"><i class="fa-solid fa-rotate"></i> Refresh</button><button class="btn btn-wa" style="padding:6px 12px;font-size:12px;" onclick="syncExistingBiometrics()"><i class="fa-solid fa-fingerprint"></i> Sync Existing Faces</button>
+            <button class="btn-admin-glow" onclick="openCreateAdminModal()">
+              <i class="fa-solid fa-user-plus"></i> + Enroll New Admin Face
+            </button>
+          </div>
+        </div>
+        <div id="adminProfilesGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:16px;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 2: STUDENTS RECORDS -->
+    <section id="studentsSec" class="admin-tab-section">
+      <div class="glass-box-admin" style="padding: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-address-book" style="color:#b366ff;"></i> Registered Students Directory</h3>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="loadAdminData(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <span id="studentCountBadge" class="badge" style="background:rgba(179,102,255,0.2); color:#b366ff;">0 Registered</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+          <input id="studentRecordSearch" placeholder="Search Student ID or Name..." style="max-width:320px;" oninput="filterStudentRecords()">
+          <button class="btn btn-primary" style="padding:6px 12px;font-size:12px;" onclick="filterStudentRecords()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+        </div>
+        <div class="student-grid" id="studentsBoxGrid"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: BOOK INVENTORY -->
+    <section id="booksSec" class="admin-tab-section">
+      <div class="glass-box-admin" style="padding: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-database" style="color:#4cd964;"></i> Categorized DBMS Library Inventory</h3>
+          <div style="display:flex; gap:10px;">
+            <select id="dbmsFilterCategory" onchange="filterDbmsBooks()" style="padding:6px 12px; font-size:12px; cursor:pointer;">
+              <option value="ALL">All Categories</option>
+              <option value="Programming & Systems">Programming & Systems</option>
+              <option value="Mathematics">Mathematics & Statistics</option>
+              <option value="Science">Physics, Chemistry, Biology</option>
+              <option value="Engineering">Engineering (CSE, ME, EE, Civil)</option>
+              <option value="Medical">Medical & Healthcare</option>
+              <option value="Commerce">Commerce, Accounts & Finance</option>
+              <option value="English Literature">English & World Literature</option>
+              <option value="History">History, Civics & Geography</option>
+              <option value="General Knowledge (GK)">General Knowledge (GK)</option>
+              <option value="Competitive Exams">UPSC, SSC, Banking & Railways</option>
+              <option value="Law">Law, Constitution & Judiciary</option>
+              <option value="Fiction">Novels & Sci-Fi Fiction</option>
+              <option value="Self Help">Self Help & Psychology</option>
+              <option value="Practice Papers & Exams">Practice Papers & Mock Exams</option>
+            </select>
+            <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="loadBooksAdmin(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Cover</th><th>ID</th><th>Title</th><th>Author</th><th>Category</th><th>Copies</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="booksAdminTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 4: FIFO / LIFO MONITOR -->
+    <section id="circulationSec" class="admin-tab-section">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="glass-box-admin" style="padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="color:#00f2fe; font-size: 16px;"><i class="fa-solid fa-list-ol"></i> FIFO Book Waiting Line (Queue)</h3>
+            <button class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="loadFifoLifoData(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+          </div>
+          <table>
+            <thead><tr><th>Pos</th><th>Student</th><th>Book</th><th>Action</th></tr></thead>
+            <tbody id="fifoTbody"></tbody>
+          </table>
+        </div>
+
+        <div class="glass-box-admin" style="padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="color:#ff77a9; font-size: 16px;"><i class="fa-solid fa-layer-group"></i> LIFO Fine Priority Stack</h3>
+            <button class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="loadFifoLifoData(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+          </div>
+          <ul id="lifoList" style="list-style: none; display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto;"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: STUDENTS FEES & FINES -->
+    <section id="studentFeesSec" class="admin-tab-section">
+      <div class="glass-box-admin" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-receipt" style="color:#00f2fe;"></i> Students Fine & Fee Payment Ledger</h3>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"><input id="feeSearch" placeholder="Search Student ID / Name..." style="max-width:260px;" oninput="filterFeeRows()"><button class="btn-admin-glow fine-add-main-btn" onclick="openFineModal()"><i class="fa-solid fa-circle-plus"></i> Add Fine</button><button class="btn btn-wa" style="padding:6px 12px;font-size:12px;" onclick="sendAllPendingFeeNotices()"><i class="fa-solid fa-bell"></i> Send All Pending Dues</button><button class="btn btn-primary" style="padding:6px 12px;font-size:12px;" onclick="loadAdminFeeData(this)"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Student ID</th><th>Name</th><th>Mobile</th><th>Unpaid Fines</th><th>Total Paid</th><th>Latest UTR</th><th>Send Notice</th></tr>
+          </thead>
+          <tbody id="adminFeesTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 6: MEMBERSHIPS & OFFERS -->
+    <section id="membershipSec" class="admin-tab-section">
+      <div class="glass-box-admin" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-gift" style="color:#ff5277;"></i> Festival & Special Offers Manager</h3>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="loadOffersAdmin(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn-admin-glow" onclick="openOfferModal()">
+              <i class="fa-solid fa-plus-circle"></i> + Create Festival Offer
+            </button>
+          </div>
+        </div>
+        <div id="offersGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:14px;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 7: NOTICES PANEL -->
+    <section id="noticeSec" class="admin-tab-section">
+      <div class="glass-box-admin" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-bullhorn" style="color:#00f2fe;"></i> Broadcast Notice Board</h3>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadAdminNotices(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn btn-danger" style="padding:5px 12px; font-size:11.5px; font-weight:700;" onclick="clearAllNotices()">
+              <i class="fa-solid fa-trash-can"></i> Clear All Notices
+            </button>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 2fr auto; gap: 10px; margin-top: 12px; margin-bottom: 18px;">
+          <input type="text" id="n_title" placeholder="Notice Title...">
+          <input type="text" id="n_msg" placeholder="Detailed message...">
+          <button class="btn-admin-glow" onclick="broadcastNotice()">Post</button>
+        </div>
+        <div id="adminNoticeList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 8: LMS ACTIVITY LOGS -->
+    <section id="lmsActivitySec" class="admin-tab-section">
+      <div class="glass-box-admin" style="padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div>
+            <h3 style="color:#fff;"><i class="fa-solid fa-clock-rotate-left" style="color: #00ff87;"></i> Live Complete LMS Activity Stream</h3>
+            <p style="color:var(--text-muted); font-size:12px; margin-top:4px;">Tracks issues, returns, student enrollments, book additions, and fee collections.</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="loadLmsActivity(this)"><i class="fa-solid fa-rotate"></i> Refresh Stream</button>
+            <button class="btn btn-danger" style="padding: 6px 14px; font-size: 12px; font-weight:700;" onclick="clearAllLmsActivities()">
+              <i class="fa-solid fa-trash-can"></i> Clear All Activities
+            </button>
+          </div>
+        </div>
+        <div id="liveActivityFullList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 9: GRIEVANCE DESK -->
+    <section id="complaintsSec" class="admin-tab-section">
+      <div class="glass-box-admin" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-headset" style="color:#ff5277;"></i> Student Grievance Resolution & Chat Desk</h3>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="loadAdminChat(this)"><i class="fa-solid fa-rotate"></i> Refresh Chat</button>
+            <button class="btn btn-danger" style="padding:6px 14px; font-size:12px; font-weight:700;" onclick="clearAllGrievanceChat()">
+              <i class="fa-solid fa-trash-can"></i> Clear All Chat
+            </button>
+          </div>
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-top:14px; margin-bottom:12px;">
+          <select id="chatStudentSelector" onchange="loadAdminChat()" style="padding:8px; font-size:13px;"></select>
+        </div>
+
+        <div id="adminChatContainer" style="background:rgba(0,0,0,0.4); border-radius:12px; padding:16px; height:340px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:12px;"></div>
+
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="adminReplyInput" placeholder="Type solution message to student..." style="flex:1;">
+          <button class="btn btn-wa" onclick="sendAdminReply()"><i class="fa-solid fa-paper-plane"></i> Send Reply</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODALS -->
+<div id="createAdminModal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(16px); z-index: 999999; align-items: center; justify-content: center;">
+  <div class="glass-box-admin" style="width: 460px; padding: 26px; text-align:center;">
+    <h3 style="color:#ffca28; margin-bottom:12px;"><i class="fa-solid fa-camera"></i> Enroll New Admin Face</h3>
+    
+    <div style="text-align:left; margin-bottom:10px;">
+      <label style="font-size:12px; color:var(--text-muted);">Admin Username / ID</label>
+      <input type="text" id="new_admin_id" placeholder="e.g. admin_raj" style="margin-top:4px; margin-bottom:8px;">
+
+      <label style="font-size:12px; color:var(--text-muted);">Full Name</label>
+      <input type="text" id="new_admin_name" placeholder="e.g. Raj Sharma" style="margin-top:4px; margin-bottom:8px;">
+
+      <label style="font-size:12px; color:var(--text-muted);">Account Password</label>
+      <div style="position:relative;">
+        <input type="password" id="new_admin_pass" placeholder="Password" style="margin-top:4px; margin-bottom:12px; padding-right:40px;">
+        <i class="fa-regular fa-eye" id="toggleNewAdminPass" onclick="toggleFieldPassword('new_admin_pass', this)" style="position:absolute; right:12px; top:12px; cursor:pointer; color:var(--text-muted);"></i>
+      </div>
+    </div>
+
+    <video id="newAdminWebcam" autoplay playsinline style="width:100%; height:200px; border-radius:10px; border:2px solid #ffca28; object-fit:cover; transform:scaleX(-1);"></video>
+
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <button class="btn btn-wa" style="flex:1;" onclick="captureAndSaveNewAdmin()"><i class="fa-solid fa-check"></i> Capture & Save Admin</button>
+      <button class="btn btn-danger" onclick="closeCreateAdminModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="editAdminModal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(16px); z-index: 999999; align-items: center; justify-content: center;">
+  <div class="glass-box-admin" style="width: 460px; padding: 26px;">
+    <h3 style="color:#ffca28; margin-bottom:14px;"><i class="fa-solid fa-user-pen"></i> Edit Admin Details</h3>
+    <input type="hidden" id="edit_adm_id_db">
+
+    <label style="font-size:12px; color:var(--text-muted);">Admin Username / ID</label>
+    <input type="text" id="edit_adm_username" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Full Name</label>
+    <input type="text" id="edit_adm_name" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Password (Leave blank to keep same)</label>
+    <div style="position:relative;">
+      <input type="password" id="edit_adm_pass" style="margin-top:4px; margin-bottom:14px; padding-right:40px;">
+      <i class="fa-regular fa-eye" id="toggleEditAdminPass" onclick="toggleFieldPassword('edit_adm_pass', this)" style="position:absolute; right:12px; top:12px; cursor:pointer; color:var(--text-muted);"></i>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-wa" style="flex:1;" onclick="submitEditAdmin()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+      <button class="btn btn-danger" onclick="closeEditAdminModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="addOfferModal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(16px); z-index: 999999; align-items: center; justify-content: center;">
+  <div class="glass-box-admin" style="width: 460px; padding: 26px;">
+    <h3 style="color:#ff5277; margin-bottom:14px;"><i class="fa-solid fa-gift"></i> Create Festival Offer Plan</h3>
+    
+    <label style="font-size:12px; color:var(--text-muted);">Festival / Event Tag</label>
+    <input type="text" id="off_tag" placeholder="Diwali / Holi / Exam Pass" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Offer Name</label>
+    <input type="text" id="off_name" placeholder="e.g. Mega Fest Study Pass" style="margin-top:4px; margin-bottom:10px;">
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+      <div>
+        <label style="font-size:12px; color:var(--text-muted);">Duration Type</label>
+        <select id="off_type" style="margin-top:4px;">
+          <option value="Daily">Daily Pass</option>
+          <option value="Weekly">Weekly Pass</option>
+          <option value="Monthly" selected>Monthly Plan</option>
+          <option value="Yearly">Yearly Special</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px; color:var(--text-muted);">Total Days</label>
+        <input type="number" id="off_days" value="30" style="margin-top:4px;">
+      </div>
+    </div>
+
+    <label style="font-size:12px; color:var(--text-muted);">Discounted Price in ₹</label>
+    <input type="number" id="off_price" value="199" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Offer Expiry Date & Time</label>
+    <input type="datetime-local" id="off_expire" style="margin-top:4px; margin-bottom:16px;">
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-wa" style="flex:1;" onclick="submitFestivalOffer()"><i class="fa-solid fa-check"></i> Publish Festival Offer</button>
+      <button class="btn btn-danger" onclick="closeOfferModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="addStuModal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(16px); z-index: 99999; align-items: center; justify-content: center;">
+  <div class="glass-box-admin" style="width: 530px; padding: 26px; max-height:90vh; overflow-y:auto;">
+    <h3 style="color:#fff; margin-bottom:12px;">Add Student (Live Camera Face & Admission)</h3>
+    
+    <div style="text-align:center; margin-bottom:12px;">
+      <video id="admissionWebcam" autoplay playsinline style="width:200px; height:150px; border-radius:10px; border:2px solid #00f2fe; object-fit:cover; transform:scaleX(-1); display:none; margin:0 auto;"></video>
+      <canvas id="admissionCanvas" style="display:none;"></canvas>
+      <img id="admissionFacePreview" src="uploads/default.png" style="width:80px; height:80px; border-radius:50%; border:2px solid #00f2fe; object-fit:cover;">
+      <div style="margin-top:6px;">
+        <button type="button" class="btn btn-wa" style="padding:4px 10px; font-size:11px;" onclick="startAdmissionCamera()">
+          <i class="fa-solid fa-camera"></i> Capture Face Snapshot
+        </button>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+      <input type="text" id="s_id" placeholder="Student ID (e.g. S001)" required>
+      <input type="text" id="s_name" placeholder="Full Name" required>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+      <input type="email" id="s_email" placeholder="Gmail Address" required>
+      <input type="tel" id="s_mobile" placeholder="Mobile Number (10 digits)" required>
+    </div>
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; margin-bottom: 10px;">
+      <input type="text" id="s_address" placeholder="Address" required>
+      <select id="s_membership">
+        <option value="1">1 Month Plan</option>
+        <option value="3">3 Months Plan</option>
+        <option value="6" selected>6 Months Plan</option>
+      </select>
+    </div>
+    
+    <div style="position:relative; margin-bottom: 12px;">
+      <input type="password" id="s_pass" placeholder="Create Password" style="padding-right:40px;" required>
+      <i class="fa-regular fa-eye" id="toggleStudentCreatePass" onclick="toggleFieldPassword('s_pass', this)" style="position:absolute; right:12px; top:12px; cursor:pointer; color:var(--text-muted);"></i>
+    </div>
+
+    <button class="btn btn-wa" style="width: 100%;" onclick="adminSendStudentOtp()">
+      <i class="fa-solid fa-shield"></i> Generate Student Admission OTP
+    </button>
+
+    <div id="otpSection" style="display:none; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+      <input type="text" id="stuOtpInput" placeholder="Enter 6-Digit OTP" style="text-align: center; letter-spacing: 3px; margin-bottom: 10px;">
+      <button class="btn-admin-glow" style="width: 100%;" onclick="verifyAndAddStudent()">Verify & Register Student</button>
+    </div>
+
+    <button class="btn" style="width: 100%; margin-top: 8px; background: transparent; color: var(--text-muted);" onclick="closeStudentModal()">Cancel</button>
+  </div>
+</div>
+
+<div id="editStuModal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(16px); z-index: 999999; align-items: center; justify-content: center;">
+  <div class="glass-box-admin" style="width: 480px; padding: 26px;">
+    <h3 style="color:#00f2fe; margin-bottom:14px;"><i class="fa-solid fa-user-pen"></i> Edit Student Details</h3>
+    <input type="hidden" id="edit_s_db_id">
+    
+    <label style="font-size:12px; color:var(--text-muted);">Student ID (Read Only)</label>
+    <input type="text" id="edit_s_id" readonly style="margin-top:4px; margin-bottom:10px; opacity:0.75;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Full Name</label>
+    <input type="text" id="edit_s_name" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Mobile Number</label>
+    <input type="tel" id="edit_s_mobile" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Gmail Address</label>
+    <input type="email" id="edit_s_email" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Address</label>
+    <input type="text" id="edit_s_address" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Account Password</label>
+    <div style="position:relative;">
+      <input type="password" id="edit_s_pass" style="margin-top:4px; margin-bottom:14px; padding-right:40px; font-family:monospace;">
+      <i class="fa-regular fa-eye" id="toggleEditStudentPass" onclick="toggleFieldPassword('edit_s_pass', this)" style="position:absolute; right:12px; top:12px; cursor:pointer; color:var(--text-muted);"></i>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-wa" style="flex:1;" onclick="submitEditStudent()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+      <button class="btn btn-danger" onclick="closeEditStudentModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="addBookModal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(16px); z-index: 999999; align-items: center; justify-content: center;">
+  <div class="glass-box-admin" style="width: 440px; padding: 26px;">
+    <h3 style="color:#00f2fe; margin-bottom:14px;"><i class="fa-solid fa-book-medical"></i> Add Book to DBMS</h3>
+    
+    <label style="font-size:12px; color:var(--text-muted);">Book ID</label>
+    <input type="text" id="b_id" placeholder="e.g. CS-201" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Book Title</label>
+    <input type="text" id="b_title" placeholder="e.g. Clean Architecture" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Author</label>
+    <input type="text" id="b_author" placeholder="e.g. Robert C. Martin" style="margin-top:4px; margin-bottom:10px;">
+
+    <label style="font-size:12px; color:var(--text-muted);">Category</label>
+    <select id="b_category" style="margin-top:4px; margin-bottom:10px;">
+      <option value="Programming & Systems">Programming & Systems</option>
+      <option value="Mathematics">Mathematics & Statistics</option>
+      <option value="Science">Physics, Chemistry, Biology</option>
+      <option value="Engineering">Engineering (CSE, ME, EE, Civil)</option>
+      <option value="Medical">Medical & Healthcare</option>
+      <option value="Commerce">Commerce, Accounts & Finance</option>
+      <option value="English Literature">English & World Literature</option>
+      <option value="History">History, Civics & Geography</option>
+      <option value="General Knowledge (GK)">General Knowledge (GK)</option>
+      <option value="Competitive Exams">UPSC, SSC, Banking & Railways</option>
+      <option value="Law">Law, Constitution & Judiciary</option>
+      <option value="Fiction">Novels & Sci-Fi Fiction</option>
+      <option value="Self Help">Self Help & Psychology</option>
+      <option value="Practice Papers & Exams">Practice Papers & Mock Exams</option>
+    </select>
+
+    <label style="font-size:12px; color:var(--text-muted);">Total Copies</label>
+    <input type="number" id="b_copies" value="3" style="margin-top:4px; margin-bottom:14px;">
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-wa" style="flex:1;" onclick="submitBook()"><i class="fa-solid fa-check"></i> Add Book</button>
+      <button class="btn btn-danger" onclick="closeBookModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+
+<!-- DIRECT ADMIN FINE CENTER -->
+<div id="addFineModal" class="admin-modal-shell">
+  <div class="fine-modal-card">
+    <div class="fine-modal-head">
+      <div><span class="fine-live-dot"></span><strong>ADMIN FINE CENTER</strong><small>Student-specific fine → Notice → QR → Receipt</small></div>
+      <button class="fine-close" onclick="closeFineModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fine-mode-switch">
+      <button id="manualFineModeBtn" class="fine-mode-btn active" onclick="setFineMode('manual')"><i class="fa-solid fa-receipt"></i> Manual Fine</button>
+      <button id="damageFineModeBtn" class="fine-mode-btn" onclick="setFineMode('damage')"><i class="fa-solid fa-book-skull"></i> Book Damage</button>
+    </div>
+    <div class="fine-form-grid">
+      <div class="fine-field full">
+        <label>Student</label>
+        <select id="fineStudent" onchange="refreshFineTransactions()"></select>
+      </div>
+      <div class="fine-field">
+        <label>Fine Type</label>
+        <select id="fineType">
+          <option>Book Physical Damage Fine</option>
+          <option>Library Discipline Fine</option>
+          <option>Lost Book Fine</option>
+          <option>Late Submission Fee</option>
+          <option>Other Library Fine</option>
+        </select>
+      </div>
+      <div class="fine-field">
+        <label>Amount (₹)</label>
+        <input id="fineAmount" type="number" min="1" step="1" placeholder="e.g. 100">
+      </div>
+      <div id="damageTransactionWrap" class="fine-field full" style="display:none;">
+        <label>Book Transaction</label>
+        <select id="fineTransaction"></select>
+      </div>
+      <div class="fine-field full">
+        <label>Reason / Damage Details</label>
+        <textarea id="fineReason" rows="3" placeholder="Example: Book cover torn / pages damaged / lost book..."></textarea>
+      </div>
+      <div class="fine-preview full">
+        <div><i class="fa-solid fa-bell"></i><span>Targeted Notice</span><b id="finePreviewStudent">Select a student</b></div>
+        <div><i class="fa-solid fa-qrcode"></i><span>Payment QR</span><b>Exact outstanding amount</b></div>
+        <div><i class="fa-solid fa-receipt"></i><span>Ledger</span><b>Admin + student history</b></div>
+      </div>
+    </div>
+    <div class="fine-modal-actions">
+      <button class="btn btn-primary" onclick="closeFineModal()">Cancel</button>
+      <button class="btn-admin-glow" id="saveFineBtn" onclick="saveAdminFine()"><i class="fa-solid fa-bolt"></i> Apply Fine & Notify</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let allStudents = [];
+  let allBooks = [];
+  let allAdmins = [];
+  let admissionStream = null;
+  let adminWebcamStream = null;
+  let capturedFaceBase64 = null;
+  let newAdminFaceBase64 = null;
+  let newAdminFaceDescriptor = null;
+  let capturedFaceDescriptor = null;
+  let adminFaceModelsReady = false;
+  window.addEventListener('DOMContentLoaded', async () => {
+    try { const u='https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/'; await faceapi.nets.tinyFaceDetector.loadFromUri(u); await faceapi.nets.faceLandmark68Net.loadFromUri(u); await faceapi.nets.faceRecognitionNet.loadFromUri(u); adminFaceModelsReady=true; } catch(e) { console.warn('Face model load failed',e); }
+  });
+
+  function toggleFieldPassword(inputId, iconElement) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      iconElement.classList.remove('fa-eye');
+      iconElement.classList.add('fa-eye-slash');
+      iconElement.style.color = '#00f2fe';
+    } else {
+      input.type = 'password';
+      iconElement.classList.remove('fa-eye-slash');
+      iconElement.classList.add('fa-eye');
+      iconElement.style.color = 'var(--text-muted)';
+    }
+  }
+
+  function bindEnterChain(idList, finalAction) {
+    idList.forEach((currentId, index) => {
+      const field = document.getElementById(currentId);
+      if (!field) return;
+      field.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (index < idList.length - 1) {
+            const nextField = document.getElementById(idList[index + 1]);
+            if (nextField) nextField.focus();
+          } else if (finalAction) {
+            finalAction();
+          }
+        }
+      });
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    bindEnterChain(['new_admin_id', 'new_admin_name', 'new_admin_pass'], captureAndSaveNewAdmin);
+    bindEnterChain(['edit_adm_username', 'edit_adm_name', 'edit_adm_pass'], submitEditAdmin);
+    bindEnterChain(['b_id', 'b_title', 'b_author', 'b_copies'], submitBook);
+    bindEnterChain(['s_id', 's_name', 's_email', 's_mobile', 's_address', 's_pass'], adminSendStudentOtp);
+    bindEnterChain(['edit_s_name', 'edit_s_mobile', 'edit_s_email', 'edit_s_address', 'edit_s_pass'], submitEditStudent);
+  });
+
+  function openAdminTab(sectionId, btnElement) {
+    document.querySelectorAll('.admin-tab-section').forEach(sec => sec.classList.remove('active-tab'));
+    document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.classList.remove('active-btn'));
+    document.getElementById(sectionId).classList.add('active-tab');
+    if (btnElement) btnElement.classList.add('active-btn');
+    if (sectionId === 'studentFeesSec') loadAdminFeeData();
+    if (sectionId === 'membershipSec') loadOffersAdmin();
+    if (sectionId === 'noticeSec') loadAdminNotices();
+    if (sectionId === 'lmsActivitySec') loadLmsActivity();
+    if (sectionId === 'circulationSec') loadFifoLifoData();
+    if (sectionId === 'adminProfilesSec') loadAdminProfiles();
+    if (sectionId === 'complaintsSec') initAdminChat();
+    if (sectionId === 'studentsSec') loadAdminData();
+    if (sectionId === 'booksSec') loadBooksAdmin();
+  }
+
+  function openStudentModal() { document.getElementById('addStuModal').style.display = 'flex'; }
+  function closeStudentModal() { 
+    if (admissionStream) admissionStream.getTracks().forEach(t => t.stop());
+    document.getElementById('addStuModal').style.display = 'none'; 
+  }
+
+  function openBookModal() { document.getElementById('addBookModal').style.display = 'flex'; }
+  function closeBookModal() { document.getElementById('addBookModal').style.display = 'none'; }
+
+  function openOfferModal() { document.getElementById('addOfferModal').style.display = 'flex'; }
+  function closeOfferModal() { document.getElementById('addOfferModal').style.display = 'none'; }
+
+  async function openCreateAdminModal() {
+    document.getElementById('createAdminModal').style.display = 'flex';
+    try {
+      adminWebcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      document.getElementById('newAdminWebcam').srcObject = adminWebcamStream;
+    } catch(e) {
+      alert('Camera error: ' + e.message);
+    }
+  }
+
+  function closeCreateAdminModal() {
+    if (adminWebcamStream) adminWebcamStream.getTracks().forEach(t => t.stop());
+    document.getElementById('createAdminModal').style.display = 'none';
+  }
+
+  async function captureAndSaveNewAdmin() {
+    const video = document.getElementById('newAdminWebcam');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 320;
+    canvas.height = video.videoHeight || 240;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    newAdminFaceBase64 = canvas.toDataURL('image/png');
+    if (!adminFaceModelsReady) return alert('AI face model is still loading. Please wait and capture again.');
+    const det = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({inputSize:320, scoreThreshold:0.65})).withFaceLandmarks().withFaceDescriptor();
+    if (!det) return alert('No clear face detected. Please face the camera directly.');
+    newAdminFaceDescriptor = Array.from(det.descriptor);
+
+    const payload = {
+      admin_id: document.getElementById('new_admin_id').value.trim(),
+      name: document.getElementById('new_admin_name').value.trim(),
+      password: document.getElementById('new_admin_pass').value.trim(),
+      face_image: newAdminFaceBase64,
+      face_descriptor: newAdminFaceDescriptor
+    };
+
+    const res = await fetch('/api/admin/profiles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const d = await res.json();
+    if (!res.ok) return alert(d.error);
+
+    alert(d.message);
+    closeCreateAdminModal();
+  
+  loadAdminProfiles();
+  }
+
+  async function syncExistingBiometrics(){
+    if(!adminFaceModelsReady) return alert('AI face model is still loading. Please wait a few seconds.');
+    const students=await (await fetch('/api/admin/students')).json();
+    const admins=await (await fetch('/api/admin/profiles')).json();
+    let synced=0, skipped=0;
+    async function descriptorFromUrl(url){
+      try{ const img=new Image(); img.crossOrigin='anonymous'; img.src=url; await img.decode(); const d=await faceapi.detectSingleFace(img,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.65})).withFaceLandmarks().withFaceDescriptor(); return d?Array.from(d.descriptor):null; }catch(e){return null;}
+    }
+    for(const s of students){ if(!s.face_image||s.face_image==='default.png') {skipped++;continue;} const d=await descriptorFromUrl('/uploads/'+s.face_image); if(d){await fetch(`/api/admin/students/${encodeURIComponent(s.student_id)}/face-descriptor`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({face_descriptor:d})});synced++;}else skipped++; }
+    for(const a of admins){ if(!a.face_image||a.face_image==='default.png'){skipped++;continue;} const d=await descriptorFromUrl('/uploads/'+a.face_image); if(d){await fetch(`/api/admin/profiles/${a.id}/face-descriptor`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({face_descriptor:d})});synced++;}else skipped++; }
+    alert(`Biometric sync complete. ${synced} profile(s) updated, ${skipped} skipped.`); loadAdminProfiles(); loadAdminData();
+  }
+
+  async function loadAdminProfiles(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+    const res = await fetch('/api/admin/profiles');
+    allAdmins = await res.json();
+    const grid = document.getElementById('adminProfilesGrid');
+
+    grid.innerHTML = allAdmins.map(adm => `
+      <div style="background:rgba(4, 15, 36, 0.85); border:1px solid rgba(255,202,40,0.3); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <img src="/uploads/${adm.face_image}" style="width:50px; height:50px; border-radius:50%; border:2px solid #ffca28; object-fit:cover;">
+          <div>
+            <strong style="color:#fff; font-size:15px;">${adm.name}</strong><br>
+            <span style="color:#ffca28; font-weight:700;">ID: ${adm.admin_id}</span>
+          </div>
+        </div>
+        <div class="info-line"><span>Enrolled:</span> <strong>${new Date(adm.created_at).toLocaleDateString()}</strong></div>
+        <div class="info-line"><span>Last Login:</span> <strong>${adm.last_login ? new Date(adm.last_login).toLocaleString() : 'Never'}</strong></div>
+        <div class="info-line"><span>Biometric:</span> <strong style="color:${adm.is_biometric_active ? '#00ff87' : '#ff3b30'}">${adm.is_biometric_active ? 'ACTIVE' : 'BLOCKED'}</strong></div>
+        
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <button class="btn btn-primary" style="flex:1; padding:5px; font-size:11px; background:linear-gradient(135deg,#0072ff,#00f2fe);" onclick="openEditAdminModal(${adm.id})">
+            <i class="fa-solid fa-pen"></i> Edit Details
+          </button>
+          <button class="btn ${adm.is_biometric_active ? 'btn-danger' : 'btn-wa'}" style="padding:5px 8px; font-size:11px;" onclick="toggleAdminBiometric(${adm.id}, ${adm.is_biometric_active ? 0 : 1})">
+            ${adm.is_biometric_active ? 'Block Face' : 'Allow Face'}
+          </button>
+          <button class="btn btn-danger" style="padding:5px 8px; font-size:11px;" onclick="deleteAdminProfile(${adm.id})">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  function openEditAdminModal(id) {
+    const adm = allAdmins.find(x => Number(x.id) === Number(id));
+    if (!adm) return alert('Admin profile not found!');
+    document.getElementById('edit_adm_id_db').value = adm.id;
+    document.getElementById('edit_adm_username').value = adm.admin_id;
+    document.getElementById('edit_adm_name').value = adm.name;
+    document.getElementById('edit_adm_pass').value = '';
+    document.getElementById('editAdminModal').style.display = 'flex';
+  }
+  function closeEditAdminModal() { document.getElementById('editAdminModal').style.display = 'none'; }
+
+  async function submitEditAdmin() {
+    const id = document.getElementById('edit_adm_id_db').value;
+    const payload = {
+      admin_id: document.getElementById('edit_adm_username').value.trim(),
+      name: document.getElementById('edit_adm_name').value.trim(),
+      password: document.getElementById('edit_adm_pass').value.trim()
+    };
+
+    const res = await fetch(`/api/admin/profiles/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const d = await res.json();
+    alert(d.message);
+    closeEditAdminModal();
+  
+  loadAdminProfiles();
+  }
+
+  async function toggleAdminBiometric(id, allow) {
+    await fetch(`/api/admin/profiles/toggle/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ allow })
+    });
+  
+  loadAdminProfiles();
+  }
+
+  async function deleteAdminProfile(id) {
+    if (confirm('Delete this admin profile permanently? Biometric access will be removed.')) {
+      await fetch(`/api/admin/profiles/${id}`, { method: 'DELETE' });
+    
+  loadAdminProfiles();
+    }
+  }
+
+  async function loadAdminData(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+    const sRes = await fetch('/api/admin/students');
+    allStudents = await sRes.json();
+    document.getElementById('studentCountBadge').innerText = `${allStudents.length} Registered`;
+    
+    renderStudentRecords(allStudents);
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+function renderStudentRecords(list) {
+    document.getElementById('studentsBoxGrid').innerHTML = list.map(s => {
+      const waClean=(s.mobile||'').replace(/[^0-9]/g,'');
+      return `<div class="student-card"><div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:8px;"><img src="${s.profile_pic&&s.profile_pic!=='default.png'?'/uploads/'+s.profile_pic:'uploads/default.png'}" style="width:46px;height:46px;border-radius:50%;border:2px solid #b366ff;object-fit:cover;"><div><strong style="color:#fff;font-size:14.5px;">${s.name}</strong><br><span style="color:#00f2fe;font-weight:700;">${s.student_id}</span></div></div><div class="info-line"><span>Mobile:</span> <strong>+91 ${waClean}</strong></div><div class="info-line"><span>Gmail:</span> <strong>${s.email||'N/A'}</strong></div><div class="info-line"><span>Address:</span> <strong>${s.address||'Bareilly'}</strong></div><div class="info-line"><span>Password:</span> <strong style="color:#00f2fe;font-family:monospace;">${s.plain_password||'password123'}</strong></div><div style="display:flex;justify-content:space-between;align-items:center;padding:6px;background:rgba(0,0,0,.3);border-radius:8px;margin-top:2px;"><span style="font-size:11.5px;color:var(--text-muted);"><i class="fa-solid fa-fingerprint"></i> Face Biometric:</span><button class="btn ${s.is_face_allowed?'btn-wa':'btn-danger'}" style="padding:2px 8px;font-size:10px;" onclick="toggleStudentBiometric('${s.student_id}',${s.is_face_allowed?0:1})">${s.is_face_allowed?'ALLOWED':'BLOCKED'}</button></div><div style="display:flex;gap:8px;margin-top:6px;"><button class="btn btn-primary" style="flex:1;padding:6px 10px;font-size:12px;background:linear-gradient(135deg,#0072ff,#00f2fe);" onclick="openEditStudentModal(${s.id})"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button class="btn btn-danger" style="flex:1;padding:6px 10px;font-size:12px;" onclick="deleteStudent(${s.id})"><i class="fa-solid fa-trash"></i> Delete</button></div></div>`;
+    }).join('') || '<div style="padding:20px;color:var(--text-muted);">No matching student found.</div>';
+  }
+  function filterStudentRecords(){ const q=(document.getElementById('studentRecordSearch').value||'').trim().toLowerCase(); renderStudentRecords(allStudents.filter(s=>!q || String(s.student_id).toLowerCase().includes(q)||String(s.name).toLowerCase().includes(q))); }
+
+  function openEditStudentModal(id) {
+    const s = allStudents.find(x => Number(x.id) === Number(id));
+    if (!s) return alert('Student record not found!');
+    document.getElementById('edit_s_db_id').value = s.id;
+    document.getElementById('edit_s_id').value = s.student_id;
+    document.getElementById('edit_s_name').value = s.name;
+    document.getElementById('edit_s_mobile').value = s.mobile;
+    document.getElementById('edit_s_email').value = s.email;
+    document.getElementById('edit_s_address').value = s.address || '';
+    document.getElementById('edit_s_pass').value = s.plain_password || '';
+    document.getElementById('editStuModal').style.display = 'flex';
+  }
+  function closeEditStudentModal() { document.getElementById('editStuModal').style.display = 'none'; }
+
+  async function submitEditStudent() {
+    const id = document.getElementById('edit_s_db_id').value;
+    const payload = {
+      name: document.getElementById('edit_s_name').value.trim(),
+      mobile: document.getElementById('edit_s_mobile').value.trim(),
+      email: document.getElementById('edit_s_email').value.trim(),
+      address: document.getElementById('edit_s_address').value.trim(),
+      password: document.getElementById('edit_s_pass').value.trim()
+    };
+
+    const res = await fetch(`/api/admin/students/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const d = await res.json();
+    alert(d.message);
+    closeEditStudentModal();
+    loadAdminData();
+  }
+
+  async function deleteStudent(id) {
+    if (confirm('Delete this student permanently?')) {
+      await fetch(`/api/admin/students/${id}`, { method: 'DELETE' });
+      loadAdminData();
+    }
+  }
+
+  async function loadAdminFeeData(btn) {
+    if (btn) btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+    const res=await fetch('/api/admin/fees-overview'); const data=await res.json();
+    window.adminFeeRows=data.feeData||[]; renderFeeRows(window.adminFeeRows);
+    if(btn) btn.innerHTML='<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+  function renderFeeRows(rows){
+    document.getElementById('adminFeesTbody').innerHTML=rows.map(f=>`<tr><td><strong style="color:#00f2fe;">${f.student_id}</strong></td><td>${f.name}</td><td>+91 ${(f.mobile||'').replace(/[^0-9]/g,'')}</td><td>${f.total_unpaid>0?`<span style="color:#ff3b30;font-weight:700;">₹${f.total_unpaid} (UNPAID)</span>`:'<span style="color:#4cd964;font-weight:700;">₹0 (CLEARED)</span>'}</td><td><strong style="color:#38ef7d;">₹${f.total_paid}</strong></td><td><small style="font-family:monospace;color:#00f2fe;">${f.recent_utr}</small></td><td style="white-space:nowrap;display:flex;gap:6px;align-items:center;"><button class="btn-admin-glow" style="padding:5px 9px;font-size:11px;" onclick="openFineModal('${f.student_id}')"><i class="fa-solid fa-plus"></i> Fine</button><button class="btn btn-wa" style="padding:5px 10px;font-size:11px;" onclick="sendDetailedFeeNotice('${f.student_id}')"><i class="fa-solid fa-bell"></i> Notice</button></td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--text-muted);">No matching student.</td></tr>';
+  }
+  function filterFeeRows(){const q=(document.getElementById('feeSearch').value||'').trim().toLowerCase();renderFeeRows((window.adminFeeRows||[]).filter(f=>!q||String(f.student_id).toLowerCase().includes(q)||String(f.name).toLowerCase().includes(q)));}
+  async function sendAllPendingFeeNotices(){const res=await fetch('/api/admin/send-all-pending-fee-notices',{method:'POST'});const d=await res.json();alert(d.message||d.error);loadAdminFeeData();}
+
+  async function sendDetailedFeeNotice(student_id) {
+    const res = await fetch('/api/admin/send-detailed-fee-notice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id })
+    });
+    const d = await res.json();
+    alert(d.message);
+  }
+
+  async function initAdminChat() {
+    const sRes = await fetch('/api/admin/students');
+    const students = await sRes.json();
+    const sel = document.getElementById('chatStudentSelector');
+    sel.innerHTML = students.map(s => `<option value="${s.student_id}">${s.name} (${s.student_id})</option>`).join('');
+    loadAdminChat();
+  }
+
+  async function loadAdminChat(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+    const stuId = document.getElementById('chatStudentSelector').value;
+    if (!stuId) return;
+
+    const res = await fetch(`/api/chat/messages?student_id=${stuId}`);
+    const messages = await res.json();
+    const container = document.getElementById('adminChatContainer');
+
+    if (messages.length === 0) {
+      container.innerHTML = `<div style="color:var(--text-muted); text-align:center; margin-top:20px;">No messages exchanged with this student yet.</div>`;
+    } else {
+      container.innerHTML = messages.map(m => `
+        <div style="align-self:${m.sender_role === 'ADMIN' ? 'flex-end' : 'flex-start'}; max-width:70%; background:${m.sender_role === 'ADMIN' ? 'linear-gradient(135deg,#0072ff,#00f2fe)' : 'rgba(255,255,255,0.1)'}; padding:10px 14px; border-radius:12px;">
+          <strong style="color:${m.sender_role === 'ADMIN' ? '#030e20' : '#ff77a9'}; font-size:12px;">${m.sender_name} (${m.sender_role})</strong>
+          <p style="color:#fff; margin:4px 0 2px 0; font-size:13.5px;">${m.message}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <small style="color:${m.sender_role === 'ADMIN' ? 'rgba(0,0,0,0.6)' : 'var(--text-muted)'}; font-size:10px;">${new Date(m.created_at).toLocaleTimeString()}</small>
+            <button class="btn btn-danger" style="padding:2px 6px; font-size:9px;" onclick="deleteAdminChatMessage(${m.id})">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh Chat';
+  }
+
+  async function sendAdminReply() {
+    const stuId = document.getElementById('chatStudentSelector').value;
+    const msg = document.getElementById('adminReplyInput').value.trim();
+    if (!msg) return;
+
+    await fetch('/api/chat/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        student_id: stuId,
+        sender_role: 'ADMIN',
+        sender_name: 'Library Admin',
+        message: msg
+      })
+    });
+    document.getElementById('adminReplyInput').value = '';
+    loadAdminChat();
+  }
+
+  async function deleteAdminChatMessage(id) {
+    if (confirm('Delete this message?')) {
+      await fetch(`/api/chat/messages/${id}`, { method: 'DELETE' });
+      loadAdminChat();
+    }
+  }
+
+  async function clearAllGrievanceChat() {
+    const stuId = document.getElementById('chatStudentSelector').value;
+    if (confirm(`Are you sure you want to permanently CLEAR ALL chat messages with student ${stuId}?`)) {
+      const res = await fetch(`/api/chat/messages/all?student_id=${stuId}`, { method: 'DELETE' });
+      const d = await res.json();
+      alert(d.message);
+      loadAdminChat();
+    }
+  }
+
+  async function clearAllLmsActivities() {
+    if (confirm('Are you sure you want to WIPE ALL LMS Activity logs from database?')) {
+      const res = await fetch('/api/admin/activities/all', { method: 'DELETE' });
+      const d = await res.json();
+      alert(d.message);
+      loadLmsActivity();
+    }
+  }
+
+  async function clearAllNotices() {
+    if (confirm('Are you sure you want to DELETE ALL notices on the broadcast board?')) {
+      const res = await fetch('/api/notices/all', { method: 'DELETE' });
+      const d = await res.json();
+      alert(d.message);
+      loadAdminNotices();
+    }
+  }
+
+  async function loadFifoLifoData(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    const res = await fetch('/api/admin/fifo-lifo');
+    const data = await res.json();
+
+    const fifoTbody = document.getElementById('fifoTbody');
+    if (data.fifo.length === 0) {
+      fifoTbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:12px;">No students in FIFO queue. Books are available!</td></tr>`;
+    } else {
+      fifoTbody.innerHTML = data.fifo.map((item, idx) => `
+        <tr>
+          <td><strong style="color:#00f2fe;">#${idx + 1}</strong></td>
+          <td><strong>${item.student_name || item.student_id}</strong><br><small style="color:var(--text-muted);">${item.student_id}</small></td>
+          <td>${item.book_title || item.book_id}</td>
+          <td>
+            <button class="btn btn-danger" style="padding:3px 8px; font-size:11px;" onclick="dismissFifoQueue(${item.id})">
+              <i class="fa-solid fa-xmark"></i> Dismiss
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    const lifoList = document.getElementById('lifoList');
+    if (data.lifo.length === 0) {
+      lifoList.innerHTML = `<li style="color:var(--text-muted); padding:10px; text-align:center;">No pending fine defaulters. All records clear!</li>`;
+    } else {
+      lifoList.innerHTML = data.lifo.map((item, idx) => `
+        <li style="background:rgba(255,59,48,0.1); border:1px solid rgba(255,59,48,0.3); padding:10px 14px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span class="badge" style="background:#ff3b30; color:#fff; font-size:10px;">TOP ${idx + 1} OVERDUE</span>
+            <strong style="color:#fff; margin-left:6px;">${item.student_name} (${item.student_id})</strong>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+              Book: <strong>${item.book_title}</strong> • Accruing: ₹3/day
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-wa" style="padding:3px 8px; font-size:10.5px;" onclick="sendDetailedFeeNotice('${item.student_id}')">
+              <i class="fa-solid fa-bell"></i> Send Itemized Notice
+            </button>
+            <button class="btn btn-danger" style="padding:3px 8px; font-size:10.5px;" onclick="dismissFifoQueue(${item.id})">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </li>
+      `).join('');
+    }
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  async function dismissFifoQueue(id) {
+    if (confirm('Remove this entry?')) {
+      await fetch(`/api/admin/fifo/${id}`, { method: 'DELETE' });
+      loadFifoLifoData();
+    }
+  }
+
+  async function loadLmsActivity(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+    const aRes = await fetch('/api/admin/activities');
+    const activities = await aRes.json();
+    const container = document.getElementById('liveActivityFullList');
+
+    if (activities.length === 0) {
+      container.innerHTML = `<div style="color:var(--text-muted); padding:15px; text-align:center;">No activity logged yet.</div>`;
+    } else {
+      container.innerHTML = activities.map(act => {
+        let badgeColor = '#00f2fe';
+        if (act.action_type.includes('ISSUE')) badgeColor = '#00ff87';
+        if (act.action_type.includes('RETURN')) badgeColor = '#b366ff';
+        if (act.action_type.includes('ADD_STUDENT') || act.action_type.includes('REGISTER_ADMIN')) badgeColor = '#ffca28';
+        if (act.action_type.includes('FEE')) badgeColor = '#ff5277';
+
+        return `
+          <div style="background: rgba(4, 15, 36, 0.7); border:1px solid rgba(255,255,255,0.1); border-left:4px solid ${badgeColor}; padding: 12px 16px; border-radius: 10px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span class="badge" style="background:${badgeColor}; color:#000; font-weight:800; font-size:10.5px;">${act.action_type}</span>
+              <strong style="color:#fff; margin-left:8px; font-size:13.5px;">${act.actor_name}</strong> 
+              <span style="color:#e2e8f0; font-size:13px;">— ${act.details}</span>
+              <small style="display:block; color:var(--text-muted); margin-top:4px;">
+                <i class="fa-regular fa-clock"></i> ${new Date(act.timestamp).toLocaleString()}
+              </small>
+            </div>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteLmsActivity(${act.id})">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh Stream';
+  }
+
+  async function deleteLmsActivity(id) {
+    if (confirm('Delete this activity entry?')) {
+      await fetch(`/api/admin/activities/${id}`, { method: 'DELETE' });
+      loadLmsActivity();
+    }
+  }
+
+  async function loadBooksAdmin(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+    const res = await fetch('/api/books');
+    allBooks = await res.json();
+    renderBooksTable(allBooks);
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  function filterDbmsBooks() {
+    const cat = document.getElementById('dbmsFilterCategory').value;
+    if (cat === 'ALL') renderBooksTable(allBooks);
+    else renderBooksTable(allBooks.filter(b => (b.category || '').toLowerCase().includes(cat.toLowerCase())));
+  }
+
+  function renderBooksTable(books) {
+    document.getElementById('booksAdminTbody').innerHTML = books.map(b => `
+      <tr>
+        <td><img src="${b.cover_image}" style="width:40px; height:55px; object-fit:cover; border-radius:4px;"></td>
+        <td><strong>${b.book_id}</strong></td>
+        <td>${b.title}</td>
+        <td>${b.author}</td>
+        <td><span class="badge" style="background:rgba(0,242,254,0.15); color:#00f2fe;">${b.category || 'General'}</span></td>
+        <td><strong>${b.available_copies}</strong> / ${b.total_copies}</td>
+        <td style="white-space: nowrap;">
+          <button class="btn btn-danger" style="padding:4px 10px; font-size:11.5px;" onclick="deleteBook(${b.id})">
+            <i class="fa-solid fa-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function submitBook() {
+    const payload = {
+      book_id: document.getElementById('b_id').value.trim(),
+      title: document.getElementById('b_title').value.trim(),
+      author: document.getElementById('b_author').value.trim(),
+      category: document.getElementById('b_category').value,
+      total_copies: parseInt(document.getElementById('b_copies').value) || 1
+    };
+
+    if (!payload.book_id || !payload.title) return alert('ID and Title required!');
+    await fetch('/api/admin/add-book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    alert('Book Added!');
+    closeBookModal();
+    loadBooksAdmin();
+  }
+
+  async function deleteBook(id) {
+    if (confirm('Delete book?')) {
+      await fetch(`/api/admin/books/${id}`, { method: 'DELETE' });
+      loadBooksAdmin();
+    }
+  }
+
+  async function broadcastNotice() {
+    const title = document.getElementById('n_title').value.trim();
+    const message = document.getElementById('n_msg').value.trim();
+    if (!title || !message) return alert('Enter both notice title and message!');
+
+    const res = await fetch('/api/notices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, message })
+    });
+    const d = await res.json();
+    alert(d.message);
+    document.getElementById('n_title').value = '';
+    document.getElementById('n_msg').value = '';
+    loadAdminNotices();
+  }
+
+  async function loadAdminNotices(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+    const res = await fetch('/api/notices');
+    const notices = await res.json();
+    const box = document.getElementById('adminNoticeList');
+    box.innerHTML = notices.map(n => `
+      <div style="background:rgba(4, 15, 36, 0.7); border-left:3px solid #00f2fe; padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <strong style="color:#00f2fe;">${n.title}</strong>
+          <p style="color:#fff; margin:4px 0 2px 0; font-size:13px;">${n.message}</p>
+          <small style="color:var(--text-muted);">${new Date(n.created_at).toLocaleString()}</small>
+        </div>
+        <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteNotice(${n.id})">Delete</button>
+      </div>
+    `).join('');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  async function deleteNotice(id) {
+    if (confirm('Delete this notice?')) {
+      await fetch(`/api/notices/${id}`, { method: 'DELETE' });
+      loadAdminNotices();
+    }
+  }
+
+  async function submitFestivalOffer() {
+    const payload = {
+      festival_tag: document.getElementById('off_tag').value.trim(),
+      offer_name: document.getElementById('off_name').value.trim(),
+      duration_type: document.getElementById('off_type').value,
+      days: parseInt(document.getElementById('off_days').value) || 30,
+      price: parseFloat(document.getElementById('off_price').value) || 199,
+      expire_at: document.getElementById('off_expire').value || null
+    };
+
+    if (!payload.offer_name) return alert('Please enter Offer Name!');
+
+    const res = await fetch('/api/admin/membership/offers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const d = await res.json();
+    alert(d.message);
+    closeOfferModal();
+    loadOffersAdmin();
+  }
+
+  async function loadOffersAdmin(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Refreshing';
+    const res = await fetch('/api/membership/offers');
+    const offers = await res.json();
+    const grid = document.getElementById('offersGrid');
+    grid.innerHTML = offers.map(o => `
+      <div style="background:rgba(4, 15, 36, 0.7); border:1px solid rgba(255,119,169,0.4); border-radius:12px; padding:16px;">
+        <span class="badge" style="background:#ff5277; color:#fff;">${o.festival_tag || 'Special Offer'}</span>
+        <h4 style="color:#fff; margin-top:8px; font-size:16px;">${o.offer_name}</h4>
+        <p style="font-size:13px; color:var(--text-muted);">${o.days} Days (${o.duration_type})</p>
+        <h3 style="color:#00ff87; margin:6px 0;">₹${o.price}</h3>
+        <small style="color:#ffca28; display:block; margin-bottom:8px;">
+          <i class="fa-regular fa-clock"></i> Valid Till: ${o.expire_at ? new Date(o.expire_at).toLocaleString() : 'Open Festival'}
+        </small>
+        <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteOffer(${o.id})">Delete Offer</button>
+      </div>
+    `).join('');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  async function deleteOffer(id) {
+    if (confirm('Delete this festival offer?')) {
+      await fetch(`/api/admin/membership/offers/${id}`, { method: 'DELETE' });
+      loadOffersAdmin();
+    }
+  }
+
+  async function startAdmissionCamera() {
+    const video = document.getElementById('admissionWebcam');
+    video.style.display = 'block';
+    admissionStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = admissionStream;
+    setTimeout(async () => {
+      const canvas = document.getElementById('admissionCanvas');
+      canvas.width = video.videoWidth || 320;
+      canvas.height = video.videoHeight || 240;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      capturedFaceBase64 = canvas.toDataURL('image/png');
+      if (adminFaceModelsReady) {
+        const det = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({inputSize:320, scoreThreshold:0.65})).withFaceLandmarks().withFaceDescriptor();
+        if (!det) { admissionStream.getTracks().forEach(t=>t.stop()); return alert('No clear face detected. Capture again with good lighting.'); }
+        capturedFaceDescriptor = Array.from(det.descriptor);
+      } else { admissionStream.getTracks().forEach(t=>t.stop()); return alert('AI face model is still loading. Please try again.'); }
+      document.getElementById('admissionFacePreview').src = capturedFaceBase64;
+      video.style.display = 'none';
+      admissionStream.getTracks().forEach(t => t.stop());
+      alert('Face captured successfully!');
+    }, 2500);
+  }
+
+  async function adminSendStudentOtp() {
+    const payload = {
+      student_id: document.getElementById('s_id').value.trim(),
+      name: document.getElementById('s_name').value.trim(),
+      email: document.getElementById('s_email').value.trim(),
+      mobile: document.getElementById('s_mobile').value.trim(),
+      address: document.getElementById('s_address').value.trim(),
+      membership_months: document.getElementById('s_membership').value,
+      password: document.getElementById('s_pass').value,
+      face_image: capturedFaceBase64,
+      face_descriptor: capturedFaceDescriptor
+    };
+    const res = await fetch('/api/admin/send-student-otp', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    const d = await res.json();
+    document.getElementById('otpSection').style.display = 'block';
+    alert(`Verification OTP Generated: ${d.otp}`);
+  }
+
+  async function verifyAndAddStudent() {
+    const res = await fetch('/api/admin/verify-and-add-student', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        student_id: document.getElementById('s_id').value.trim(),
+        entered_otp: document.getElementById('stuOtpInput').value.trim()
+      })
+    });
+    const d = await res.json();
+    if (!res.ok) return alert(d.error);
+    alert(d.message);
+    closeStudentModal();
+    loadAdminData();
+  }
+
+  async function toggleStudentBiometric(stuId, allow) {
+    const res = await fetch('/api/admin/toggle-biometric', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: stuId, allow })
+    });
+    const d = await res.json();
+    alert(d.message);
+    loadAdminData();
+  }
+
+
+  let fineMode='manual';
+  let fineTargets={students:[],transactions:[]};
+  async function openFineModal(studentId=''){
+    const modal=document.getElementById('addFineModal'); modal.style.display='flex';
+    document.getElementById('fineAmount').value=''; document.getElementById('fineReason').value='';
+    await loadFineTargets();
+    if(studentId) document.getElementById('fineStudent').value=studentId;
+    refreshFineTransactions(); setFineMode('manual');
+  }
+  function closeFineModal(){document.getElementById('addFineModal').style.display='none';}
+  async function loadFineTargets(){
+    const res=await fetch('/api/admin/fine-targets'); const d=await res.json(); if(!res.ok) return alert(d.error||'Unable to load students');
+    fineTargets=d;
+    const sel=document.getElementById('fineStudent');
+    sel.innerHTML=d.students.map(s=>`<option value="${s.student_id}">${s.name} (${s.student_id})</option>`).join('');
+    updateFinePreview();
+  }
+  function updateFinePreview(){
+    const sel=document.getElementById('fineStudent'); const txt=sel?.selectedOptions?.[0]?.textContent||'Select a student'; document.getElementById('finePreviewStudent').textContent=txt;
+  }
+  function refreshFineTransactions(){
+    updateFinePreview();
+    const id=document.getElementById('fineStudent').value;
+    const txs=(fineTargets.transactions||[]).filter(t=>t.student_id===id);
+    document.getElementById('fineTransaction').innerHTML=txs.length?txs.map(t=>`<option value="${t.id}">#${t.id} • ${t.book_title||t.book_id} (${t.book_id}) • ${t.status}</option>`).join(''):'<option value="">No book transaction found</option>';
+  }
+  function setFineMode(mode){
+    fineMode=mode;
+    document.getElementById('manualFineModeBtn').classList.toggle('active',mode==='manual');
+    document.getElementById('damageFineModeBtn').classList.toggle('active',mode==='damage');
+    document.getElementById('damageTransactionWrap').style.display=mode==='damage'?'block':'none';
+    document.getElementById('fineType').value=mode==='damage'?'Book Physical Damage Fine':'Library Discipline Fine';
+  }
+  async function saveAdminFine(){
+    const student_id=document.getElementById('fineStudent').value;
+    const amount=Number(document.getElementById('fineAmount').value);
+    const reason=document.getElementById('fineReason').value.trim();
+    const fine_type=document.getElementById('fineType').value;
+    if(!student_id||!Number.isFinite(amount)||amount<=0||!reason) return alert('Student, amount and reason are required.');
+    const btn=document.getElementById('saveFineBtn'); btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    try{
+      let url='/api/admin/add-student-fine', payload={student_id,fine_type,amount,reason};
+      if(fineMode==='damage'){
+        const transaction_id=document.getElementById('fineTransaction').value;
+        if(!transaction_id) return alert('Select a book transaction first.');
+        url='/api/admin/apply-damage-fine'; payload={transaction_id,damage_amount:amount,reason};
+      }
+      const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); const d=await res.json();
+      if(!res.ok) return alert(d.error||'Fine could not be applied.');
+      alert(d.message||'Fine applied successfully.'); closeFineModal(); loadAdminFeeData(); loadFifoLifoData(); loadLmsActivity();
+    }finally{btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-bolt"></i> Apply Fine & Notify';}
+  }
+
+  loadAdminProfiles();
+
+  loadAdminProfiles();
+</script>
+</body>
+</html>

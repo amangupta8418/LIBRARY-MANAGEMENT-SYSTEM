@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Console - LMS Executive</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* EXACT ADMIN DASHBOARD LUXURY NEON ANIMATED BACKGROUND */
+    body.student-bg {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top right, rgba(45, 12, 70, 0.45) 0%, rgba(3, 8, 22, 0.96) 75%),
+                  url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1920&q=85') no-repeat center center fixed;
+      background-size: cover;
+      animation: adminLikePulse 8s ease-in-out infinite alternate;
+      overflow-x: hidden;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    @keyframes adminLikePulse {
+      0% { filter: brightness(0.92) contrast(1.08); }
+      50% { filter: brightness(1.05) contrast(1.15); }
+      100% { filter: brightness(0.95) contrast(1.1); }
+    }
+
+    .portal-frame { display: flex; min-height: 100vh; }
+    
+    /* ADMIN-IDENTICAL DEEP GLASS SIDEBAR */
+    .left-sidebar {
+      width: 290px;
+      background: rgba(4, 10, 26, 0.94);
+      backdrop-filter: blur(22px);
+      border-right: 1px solid rgba(179, 102, 255, 0.35);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.7);
+    }
+
+    /* NEON FLOW TITLE MATCHING ADMIN BRAND */
+    .student-brand-title {
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ff007f, #b366ff, #00f2fe, #ff007f);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: neonBrandShift 5s ease infinite;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @keyframes neonBrandShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .main-viewport { flex: 1; padding: 26px 36px; overflow-y: auto; }
+    .portal-section { display: none; }
+    .portal-section.active-tab { 
+      display: block; 
+      animation: adminTabFade 0.35s ease-in-out; 
+    }
+    @keyframes adminTabFade { 
+      from { opacity: 0; transform: translateY(8px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+
+    /* IDENTICAL BUTTONS WITH EXACT ADMIN SHADOWS & HOVER SLIDES */
+    .sidebar-btn {
+      width: 100%;
+      justify-content: flex-start;
+      background: rgba(255, 255, 255, 0.03);
+      color: #a0aec0;
+      font-family: 'Rajdhani', sans-serif !important;
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      transition: all 0.25s ease;
+      text-align: left;
+    }
+    .sidebar-btn:hover { 
+      background: rgba(179, 102, 255, 0.15); 
+      color: #fff; 
+      transform: translateX(4px); 
+      border-color: rgba(179, 102, 255, 0.4);
+    }
+    .sidebar-btn.active-btn {
+      background: linear-gradient(135deg, #7928ca, #b366ff) !important;
+      color: #fff !important;
+      font-weight: 800;
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 20px rgba(179, 102, 255, 0.5);
+    }
+
+    /* GLASS CONTAINER WITH PURPLE-CYAN BORDER GLOW */
+    .glass-box-student {
+      background: rgba(4, 12, 32, 0.88);
+      backdrop-filter: blur(25px);
+      border-radius: 18px;
+      border: 1px solid rgba(179, 102, 255, 0.3);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8);
+    }
+
+    .profile-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 13.5px;
+    }
+
+    /* REAL-TIME ULTRA-RESPONSIVE SEARCH INPUT */
+    .cyber-search-box {
+      width: 100% !important;
+      background: rgba(0, 0, 0, 0.55) !important;
+      color: #00f2fe !important;
+      border: 1.5px solid rgba(0, 242, 254, 0.4) !important;
+      border-radius: 12px !important;
+      padding: 12px 18px !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      outline: none !important;
+      box-sizing: border-box !important;
+      letter-spacing: 0.5px !important;
+      transition: all 0.25s ease !important;
+    }
+    .cyber-search-box:focus {
+      border-color: #00ff87 !important;
+      box-shadow: 0 0 20px rgba(0, 255, 135, 0.4) !important;
+      background: rgba(0, 0, 0, 0.75) !important;
+    }
+
+    /* FESTIVAL PASS CARD */
+    .fest-card {
+      background: linear-gradient(135deg, rgba(255,0,127,0.18), rgba(0,242,254,0.18));
+      border: 2px solid #ff77a9;
+      border-radius: 16px;
+      padding: 22px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: festGlow 3s infinite alternate;
+    }
+    @keyframes festGlow {
+      0% { box-shadow: 0 0 15px rgba(255,119,169,0.3); border-color:#ff77a9; }
+      100% { box-shadow: 0 0 30px rgba(0,242,254,0.6); border-color:#00f2fe; }
+    }
+
+    .countdown-timer-box {
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,202,40,0.5);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-family: 'Orbitron', monospace;
+      color: #ffca28;
+      font-size: 12.5px;
+      margin-bottom: 12px;
+    }
+
+    /* GATE ANIMATED BOX */
+    .gate-glow-card {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="student-bg">
+
+<div class="portal-frame">
+  
+  <!-- LEFT SIDEBAR -->
+  <aside class="left-sidebar">
+    <div>
+      <h2 class="student-brand-title">
+        <i class="fa-solid fa-graduation-cap" style="color: #b366ff;"></i> STUDENT CORE
+      </h2>
+
+      <div style="display:flex; align-items:center; gap:12px; padding:14px 0 12px 0; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:10px;">
+        <img id="sidebarMiniAvatar" src="uploads/default.png" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:2px solid #b366ff;">
+        <div>
+          <h4 id="sidebarMiniName" style="font-size:14.5px; color:#fff; font-weight:700;">Loading...</h4>
+          <span id="sidebarMiniId" style="color:#00f2fe; font-family:'Orbitron'; font-size:12px;">ID: --</span>
+        </div>
+      </div>
+
+      <div class="gate-glow-card">
+        <small style="color:#00f2fe; font-weight:700; text-transform:uppercase; font-size:11px; display:block; margin-bottom:6px;">
+          <i class="fa-solid fa-door-open"></i> Attendance Gate
+        </small>
+        <button class="btn btn-wa" style="width:100%; padding:9px; font-size:12.5px; font-weight:800;" onclick="punchAttendance()">
+          <i class="fa-solid fa-fingerprint"></i> Punch Entry / Exit
+        </button>
+      </div>
+
+      <nav id="navMenuStudent" style="display: flex; flex-direction: column; gap: 6px; margin-top: 12px;">
+        <button class="sidebar-btn active-btn" onclick="openTab('profileSec', this)">
+          <i class="fa-solid fa-id-card-clip" style="color: #00f2fe;"></i> 1. My Profile
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('attendanceSec', this)">
+          <i class="fa-solid fa-calendar-check" style="color: #4facfe;"></i> 2. Attendance Timeline
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('catalogSec', this)">
+          <i class="fa-solid fa-database" style="color: #00ff87;"></i> 3. Book Catalog
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('booksSec', this)">
+          <i class="fa-solid fa-book-bookmark" style="color: #60efff;"></i> 4. Issued Books & Fines
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('feesNoticeSec', this)" style="border-left: 3px solid #ff5277;">
+          <i class="fa-solid fa-bell" style="color:#ff5277;"></i> 5. Fees & Fine Notices
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('feePaymentSec', this)">
+          <i class="fa-solid fa-qrcode" style="color: #ffca28;"></i> 6. Pay Fees & Slips
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('membershipSec', this)">
+          <i class="fa-solid fa-gift" style="color: #ff77a9;"></i> 7. Offers & Passes
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('myActivitySec', this)">
+          <i class="fa-solid fa-clock-rotate-left" style="color: #b366ff;"></i> 8. Personal History
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('noticeSec', this)">
+          <i class="fa-solid fa-bullhorn" style="color: #00ff87;"></i> 9. General Notice Feed
+        </button>
+
+        <button class="sidebar-btn" onclick="openTab('grievanceChatSec', this)">
+          <i class="fa-solid fa-headset" style="color:#ff3b30;"></i> 10. Help & Grievance Chat
+        </button>
+      </nav>
+    </div>
+
+    <div style="margin-top: auto; padding-top:14px;">
+      <button class="btn btn-danger" style="width:100%; font-weight:700;" onclick="sessionStorage.clear(); window.location.href='index.html';">
+        <i class="fa-solid fa-power-off"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-viewport">
+    
+    <!-- 1. TAB: MY PROFILE -->
+    <section id="profileSec" class="portal-section active-tab">
+      <div class="glass-box-student" style="padding: 26px; max-width: 760px;">
+        <h2 style="font-family:'Orbitron', sans-serif; font-size: 20px; color:#fff; margin-bottom: 18px;">
+          <i class="fa-solid fa-user-circle" style="color: #00f2fe;"></i> Student Profile Details
+        </h2>
+
+        <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.08);">
+          <img id="avatarDisplay" src="uploads/default.png" style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #b366ff;">
+          <div>
+            <h3 id="pName" style="font-size: 20px; color:#fff; font-weight:800;">--</h3>
+            <span id="pIdBadge" class="badge badge-issued">ID: --</span>
+            
+            <div style="margin-top:12px;">
+              <input type="file" id="photoGalleryInput" accept="image/png, image/jpeg, image/webp" style="font-size:12px; margin-bottom:6px;">
+              <br>
+              <button class="btn btn-primary" style="padding:6px 14px; font-size:12px; background:linear-gradient(135deg,#0072ff,#00f2fe);" onclick="uploadFromGallery()">
+                <i class="fa-solid fa-image"></i> Upload from Gallery (Max 2MB)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.35); padding: 16px 20px; border-radius: 14px;">
+          <div class="profile-info-row"><span>Student ID:</span> <strong id="pId">--</strong></div>
+          <div class="profile-info-row"><span>Mobile:</span> <strong id="pMobile">--</strong></div>
+          <div class="profile-info-row"><span>Gmail:</span> <strong id="pEmail">--</strong></div>
+          <div class="profile-info-row"><span>Address:</span> <strong id="pAddress">--</strong></div>
+          
+          <div class="profile-info-row">
+            <span>Account Password:</span> 
+            <div style="display:flex; align-items:center; gap:10px;">
+              <strong id="pPasswordMasked" style="color:#00f2fe; font-family:monospace; font-size:16px;">••••••••</strong>
+              <i class="fa-regular fa-eye" id="toggleStudentEye" style="cursor:pointer; color:#00f2fe;" onclick="toggleStudentPasswordDisplay()"></i>
+            </div>
+          </div>
+
+          <div class="profile-info-row"><span>Membership Expiry:</span> <strong id="pExpiry" style="color:#00ff87;">--</strong></div>
+        </div>
+
+        <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.1);">
+          <h4 style="color:#fff; margin-bottom:10px;"><i class="fa-solid fa-lock" style="color:#00f2fe;"></i> Change Password</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <input type="password" id="cur_pass" placeholder="Current Password" style="background:rgba(0,0,0,0.5); color:#fff; border:1px solid rgba(179,102,255,0.4); padding:10px; border-radius:8px;">
+            <input type="password" id="new_pass" placeholder="New Password" style="background:rgba(0,0,0,0.5); color:#fff; border:1px solid rgba(179,102,255,0.4); padding:10px; border-radius:8px;">
+          </div>
+          <button class="btn btn-wa" style="margin-top:12px; padding:9px 20px;" onclick="changeStudentPassword()">
+            <i class="fa-solid fa-key"></i> Update Password
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TAB: ATTENDANCE TIMELINE -->
+    <section id="attendanceSec" class="portal-section">
+      <div class="glass-box-student" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-calendar-days" style="color:#00f2fe;"></i> Daily Library Entry & Exit History</h3>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadAttendanceHistory(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn btn-danger" style="padding:5px 12px; font-size:11.5px; font-weight:700;" onclick="clearAllAttendance()">
+              <i class="fa-solid fa-trash-can"></i> Clear All Attendance
+            </button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Entry Time</th><th>Exit Time</th><th>Session Duration</th><th>Status</th><th>Action</th></tr>
+          </thead>
+          <tbody id="attendanceTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. TAB: DBMS BOOK CATALOG (SEARCH FIX APPLIED HERE) -->
+    <section id="catalogSec" class="portal-section">
+      <div class="glass-box-student" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-database" style="color:#00ff87;"></i> Structured DBMS Book Inventory</h3>
+          <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadStudentData(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        
+        <!-- Live Instant Search Filtering -->
+        <div style="position:relative; margin-bottom: 16px;">
+          <input type="text" id="catalogSearch" class="cyber-search-box" placeholder="Search Book ID, Title, Author, or Category (e.g. BK-108, Python, Herbert)..." oninput="filterCatalogNow()" onkeyup="filterCatalogNow()" autocomplete="off">
+          <i class="fa-solid fa-magnifying-glass" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); color:#00f2fe; font-size:16px;"></i>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Cover</th><th>Book ID</th><th>Title</th><th>Category</th><th>Copies</th><th>Borrow Days</th><th>Action</th></tr>
+          </thead>
+          <tbody id="catalogTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. TAB: MY BOOKS & FINES -->
+    <section id="booksSec" class="portal-section">
+      <div class="glass-box-student" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-book-bookmark" style="color:#4cd964;"></i> Issued Books & Fine Ledger</h3>
+          <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadStudentData(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <p style="color:var(--text-muted); font-size:12px; margin-bottom:14px;">Late Fine: ₹3/day for overdue days. Damage inspection is handled by Admin.</p>
+        <table>
+          <thead>
+            <tr><th>Cover</th><th>Title</th><th>Issued Date</th><th>Expected Return</th><th>Fine (₹3/day)</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="myIssuedTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 5. TAB: DEDICATED FEES NOTICE -->
+    <section id="feesNoticeSec" class="portal-section">
+      <div class="glass-box-student" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="color:#ff5277;"><i class="fa-solid fa-triangle-exclamation"></i> Official Library Fee Alerts & Notices</h3>
+          <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadFeesNotices(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <div id="feesNoticeContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>
+    </section>
+
+    <!-- 6. TAB: FEE PAYMENT WITH UPI QR -->
+    <section id="feePaymentSec" class="portal-section">
+      <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap:20px;">
+        
+        <div class="glass-box-student" style="padding: 24px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-qrcode" style="color:#00f2fe;"></i> Instant UPI QR Fee Payment</h3>
+          <p style="color:var(--text-muted); font-size:12.5px; margin:6px 0 10px 0;">Official UPI: <strong>aman730988-1@oksbi</strong></p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+            <span style="background:rgba(0,255,135,.10);color:#00ff87;border:1px solid rgba(0,255,135,.25);padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;"><i class="fa-solid fa-lock"></i> SECURE PAYMENT</span>
+            <span style="background:rgba(0,242,254,.10);color:#00f2fe;border:1px solid rgba(0,242,254,.25);padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;">QR LINKED TO ${user.student_id}</span>
+          </div>
+
+          <label style="font-size:12px; color:var(--text-muted);">Select Fee Purpose</label>
+          <select id="pay_fee_type" onchange="updateDynamicQr()" style="margin-top:4px; margin-bottom:12px;">
+            <option value="Late Return Book Fine">Late Return Book Fine (₹3/day)</option>
+            <option value="Book Physical Damage Fine">Book Physical Damage Fine (₹5)</option>
+            <option value="Membership Plan Renewal">Membership Plan Renewal</option>
+          </select>
+
+          <label style="font-size:12px; color:var(--text-muted);">Amount in ₹</label>
+          <input type="number" id="pay_amount" value="50" oninput="updateDynamicQr()" style="margin-top:4px; margin-bottom:14px;">
+
+          <div style="text-align:center; background:#fff; padding:14px; border-radius:12px; display:inline-block; margin-bottom:14px;">
+            <img id="dynamicUpiQr" src="" style="width:160px; height:160px;">
+            <p style="color:#000; font-size:11px; font-weight:700; margin-top:6px;">Scan with GPay, PhonePe, Paytm</p>
+          </div>
+
+          <label style="font-size:12px; color:var(--text-muted);">Enter 12-Digit UTR / Reference</label>
+          <input type="text" id="pay_utr" placeholder="e.g. 423987123456" style="margin-top:4px; margin-bottom:14px;">
+
+          <button class="btn btn-wa" style="width:100%; padding:11px;" onclick="submitUtrPayment()">
+            <i class="fa-solid fa-check-circle"></i> Verify UTR & Generate Slip
+          </button>
+        </div>
+
+        <div class="glass-box-student" style="padding: 24px; text-align:center;">
+          <h3 style="color:#fff; margin-bottom:12px;"><i class="fa-solid fa-file-invoice" style="color:#00f2fe;"></i> Official Payment Receipt</h3>
+          <div id="receiptPlaceholder" style="color:var(--text-muted); padding:30px 10px;">
+            Pay via UPI and enter UTR to view and download your verified fee slip.
+          </div>
+
+          <div id="printableSlipCard" style="display:none;" class="receipt-slip-hologram">
+            <div class="receipt-topline"><span>● VERIFIED PAYMENT</span><span id="rReceiptNo">LMS-000000</span></div>
+            <div class="receipt-brand-mark">▣</div>
+            <h2 class="receipt-brand-title">DIGITAL LIBRARY LMS</h2>
+            <div class="receipt-subtitle">OFFICIAL E-PAYMENT RECEIPT</div>
+            <div class="receipt-paid-badge">PAYMENT SUCCESSFUL</div>
+            <div class="receipt-student-box">
+              <div class="receipt-avatar" id="rAvatar">A</div>
+              <div><div class="receipt-label">STUDENT</div><strong id="rStudentName">--</strong><span id="rStuId">--</span></div>
+            </div>
+            <div class="receipt-detail-grid">
+              <div><span>FINE TYPE</span><strong id="rType">--</strong></div>
+              <div><span>BOOK</span><strong id="rBook">--</strong></div>
+              <div><span>AMOUNT PAID</span><strong id="rAmount" class="receipt-amount">--</strong></div>
+              <div><span>LATE DAYS</span><strong id="rLateDays">0</strong></div>
+              <div><span>ISSUE DATE</span><strong id="rIssueDate">--</strong></div>
+              <div><span>DUE DATE</span><strong id="rDueDate">--</strong></div>
+            </div>
+            <div class="receipt-meta-row"><span>UTR / TRANSACTION</span><strong id="rUtr">--</strong></div>
+            <div class="receipt-meta-row"><span>PAYMENT DATE & TIME</span><strong id="rDate">--</strong></div>
+            <div class="receipt-thanks">Thank you for keeping your library account clear.</div>
+            <button class="btn btn-primary receipt-print-btn" onclick="printOnlyFeeSlipDirect()"><i class="fa-solid fa-print"></i> Download / Print Official Slip</button>
+          </div>
+
+          <h4 style="color:#fff; margin-top:24px; margin-bottom:8px; text-align:left;"><i class="fa-solid fa-clock-rotate-left"></i> Permanent Receipts History</h4>
+          <div id="permanentReceiptsList" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; text-align:left;"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7. TAB: FESTIVAL OFFERS -->
+    <section id="membershipSec" class="portal-section">
+      <div class="glass-box-student" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="color:#ff77a9; font-family:'Orbitron', sans-serif;"><i class="fa-solid fa-wand-magic-sparkles"></i> Active Festival Celebration Offers</h3>
+          <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadStudentFestivalOffers(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <div id="studentOffersGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px;"></div>
+      </div>
+    </section>
+
+    <!-- 8. TAB: MY ACTIVITY -->
+    <section id="myActivitySec" class="portal-section">
+      <div class="glass-box-student" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-clock-rotate-left" style="color:#00f2fe;"></i> My Personal Library Activity Stream</h3>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadMyActivities(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn btn-danger" style="padding:5px 12px; font-size:11.5px; font-weight:700;" onclick="clearAllMyActivities()">
+              <i class="fa-solid fa-trash-can"></i> Clear All History
+            </button>
+          </div>
+        </div>
+        <ul id="myPersonalActivityList" style="list-style:none; display:flex; flex-direction:column; gap:8px;"></ul>
+      </div>
+    </section>
+
+    <!-- 9. TAB: NOTICES -->
+    <section id="noticeSec" class="portal-section">
+      <div class="glass-box-student" style="padding: 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="color:#fff;"><i class="fa-solid fa-bullhorn" style="color:#00f2fe;"></i> General Notice Board</h3>
+          <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadAllNotices(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <div id="noticeContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>
+    </section>
+
+    <!-- 10. TAB: GRIEVANCE CHAT -->
+    <section id="grievanceChatSec" class="portal-section">
+      <div class="glass-box-student" style="padding: 24px; max-width:760px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="color:#ff77a9;"><i class="fa-solid fa-headset"></i> Student Direct Help & Grievance Desk</h3>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="loadStudentChat(this)"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            <button class="btn btn-danger" style="padding:5px 12px; font-size:11.5px; font-weight:700;" onclick="clearStudentChat()">
+              <i class="fa-solid fa-trash-can"></i> Clear Chat
+            </button>
+          </div>
+        </div>
+        <p style="color:var(--text-muted); font-size:12.5px; margin-bottom:12px;">Chat directly with library administration for book issues, fine queries or membership support.</p>
+        
+        <div id="studentChatBox" style="background:rgba(0,0,0,0.4); border-radius:12px; padding:16px; height:320px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:14px;"></div>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input type="text" id="studentMsgInput" class="cyber-search-box" style="font-size:13.5px !important;" placeholder="Type your problem or message for Admin..." autocomplete="off">
+          <button class="btn btn-wa" style="white-space:nowrap; padding:12px 20px; font-weight:800;" onclick="sendStudentGrievance()">
+            <i class="fa-solid fa-paper-plane"></i> Send
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<iframe id="printReceiptFrame" style="display:none;"></iframe>
+
+<script>
+  let rawStudentPassword = 'password123';
+  let isPasswordVisible = false;
+  let offersInterval = null;
+  let globalBooksList = []; // Global Storage for instant search filter
+
+  const user = JSON.parse(sessionStorage.getItem('lms_user') || '{}');
+  if (!user.student_id) window.location.href = 'index.html';
+
+  function bindEnterChain(idList, finalAction) {
+    idList.forEach((currentId, index) => {
+      const field = document.getElementById(currentId);
+      if (!field) return;
+      field.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (index < idList.length - 1) {
+            const nextField = document.getElementById(idList[index + 1]);
+            if (nextField) nextField.focus();
+          } else if (finalAction) {
+            finalAction();
+          }
+        }
+      });
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    bindEnterChain(['cur_pass', 'new_pass'], changeStudentPassword);
+    bindEnterChain(['pay_amount', 'pay_utr'], submitUtrPayment);
+    bindEnterChain(['studentMsgInput'], sendStudentGrievance);
+  });
+
+  function openTab(tabId, btnElement) {
+    document.querySelectorAll('.portal-section').forEach(sec => sec.classList.remove('active-tab'));
+    document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active-btn'));
+    document.getElementById(tabId).classList.add('active-tab');
+    if (btnElement) btnElement.classList.add('active-btn');
+    if (tabId === 'myActivitySec') loadMyActivities();
+    if (tabId === 'attendanceSec') loadAttendanceHistory();
+    if (tabId === 'feePaymentSec') { loadOutstandingFees(); loadPermanentReceipts(); }
+    if (tabId === 'membershipSec') loadStudentFestivalOffers();
+    if (tabId === 'feesNoticeSec') loadFeesNotices();
+    if (tabId === 'noticeSec') loadAllNotices();
+    if (tabId === 'catalogSec') loadStudentData();
+    if (tabId === 'grievanceChatSec') {
+      loadStudentChat();
+      setTimeout(() => document.getElementById('studentMsgInput').focus(), 150);
+    }
+  }
+
+  function toggleStudentPasswordDisplay() {
+    const pwdEl = document.getElementById('pPasswordMasked');
+    const eyeIcon = document.getElementById('toggleStudentEye');
+    if (!isPasswordVisible) {
+      pwdEl.innerText = rawStudentPassword;
+      eyeIcon.classList.remove('fa-eye');
+      eyeIcon.classList.add('fa-eye-slash');
+      isPasswordVisible = true;
+    } else {
+      pwdEl.innerText = '••••••••';
+      eyeIcon.classList.remove('fa-eye-slash');
+      eyeIcon.classList.add('fa-eye');
+      isPasswordVisible = false;
+    }
+  }
+
+  async function uploadFromGallery() {
+    const file = document.getElementById('photoGalleryInput').files[0];
+    if (!file) return alert('Select image file!');
+    if (file.size > 2 * 1024 * 1024) return alert('Strict 2MB limit!');
+
+    const fd = new FormData();
+    fd.append('profile_pic', file);
+    fd.append('student_id', user.student_id);
+
+    const res = await fetch('/api/student/upload-photo', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('avatarDisplay').src = `/uploads/${data.filename}`;
+      document.getElementById('sidebarMiniAvatar').src = `/uploads/${data.filename}`;
+      alert('Photo updated!');
+    }
+  }
+
+  function speakLibraryEvent(event, name){ if(!('speechSynthesis' in window)) return; const text=event==='EXIT'?`Bye ${name}. Thank you for visiting the library.`:`${name}, welcome to the library.`; window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.rate=0.9; u.pitch=1; u.volume=1; window.speechSynthesis.speak(u); }
+
+  async function punchAttendance() {
+    const res = await fetch('/api/attendance/punch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: user.student_id })
+    });
+    const d = await res.json();
+    alert(d.message);
+    speakLibraryEvent(d.action || d.event, user.name);
+    loadAttendanceHistory();
+  }
+
+  async function loadAttendanceHistory(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    const res = await fetch(`/api/attendance/history/${user.student_id}`);
+    const data = await res.json();
+    document.getElementById('attendanceTbody').innerHTML = data.map(a => `
+      <tr>
+        <td><strong>${new Date(a.entry_time).toLocaleDateString()}</strong></td>
+        <td>${new Date(a.entry_time).toLocaleTimeString()}</td>
+        <td>${a.exit_time ? new Date(a.exit_time).toLocaleTimeString() : '<span style="color:#00f2fe;">Inside Library</span>'}</td>
+        <td><strong>${a.duration_minutes > 0 ? Math.floor(a.duration_minutes/60) + 'h ' + (a.duration_minutes%60) + 'm' : 'In Session'}</strong></td>
+        <td><span class="badge ${a.exit_time ? 'badge-issued' : 'badge-fifo'}">${a.exit_time ? 'COMPLETED' : 'ACTIVE'}</span></td>
+        <td>
+          <button class="btn btn-danger" style="padding:3px 8px; font-size:10px;" onclick="deleteAttendanceLog(${a.id})"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>
+    `).join('');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  async function deleteAttendanceLog(id) {
+    if (confirm('Delete this attendance entry?')) {
+      await fetch(`/api/attendance/${id}`, { method: 'DELETE' });
+      loadAttendanceHistory();
+    }
+  }
+
+  async function clearAllAttendance() {
+    if (confirm('Delete your entire attendance history?')) {
+      await fetch(`/api/attendance/history/all/${user.student_id}`, { method: 'DELETE' });
+      loadAttendanceHistory();
+    }
+  }
+
+  // LOAD DATA & CATALOG
+  async function loadStudentData(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    
+    // 1. Profile Details
+    const res = await fetch(`/api/student/profile/${user.student_id}`);
+    const data = await res.json();
+    
+    document.getElementById('sidebarMiniName').innerText = data.name;
+    document.getElementById('sidebarMiniId').innerText = `ID: ${data.student_id}`;
+    document.getElementById('pName').innerText = data.name;
+    document.getElementById('pIdBadge').innerText = `ID: ${data.student_id}`;
+    document.getElementById('pId').innerText = data.student_id;
+    document.getElementById('pMobile').innerText = data.mobile;
+    document.getElementById('pEmail').innerText = data.email;
+    document.getElementById('pAddress').innerText = data.address || 'Bareilly';
+    document.getElementById('pExpiry').innerText = data.membership_expiry ? new Date(data.membership_expiry).toLocaleDateString() : 'Active';
+    rawStudentPassword = data.plain_password || 'password123';
+
+    if (data.profile_pic && data.profile_pic !== 'default.png') {
+      document.getElementById('avatarDisplay').src = `/uploads/${data.profile_pic}`;
+      document.getElementById('sidebarMiniAvatar').src = `/uploads/${data.profile_pic}`;
+    }
+
+    // 2. Fetch Books & Store in globalBooksList
+    const cRes = await fetch('/api/books');
+    globalBooksList = await cRes.json();
+    renderCatalogRows(globalBooksList);
+
+    // 3. My Issued Books
+    const myRes = await fetch(`/api/student/my-books/${user.student_id}`);
+    const myBooks = await myRes.json();
+    document.getElementById('myIssuedTbody').innerHTML = myBooks.map(b => `
+      <tr>
+        <td><img src="${b.cover_image}" style="width:40px; height:55px; object-fit:cover; border-radius:4px;"></td>
+        <td>${b.title}</td>
+        <td>${b.issue_date ? new Date(b.issue_date).toLocaleDateString() : '--'}</td>
+        <td><strong style="color:#00f2fe;">${b.expected_return ? new Date(b.expected_return).toLocaleDateString() : '--'}</strong></td>
+        <td>${b.calculated_fine > 0 ? `<span style="color:#ff3b30; font-weight:700;">₹${b.calculated_fine} FINE</span>` : '₹0'}</td>
+        <td style="white-space: nowrap;">
+          <div style="display:flex; gap:6px;">
+            ${b.status === 'ISSUED' ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="returnBook('${b.id}', '${b.book_id}')">Return Book</button>` : '<span class="badge badge-issued">Returned</span>'}
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px; background:#4a5568;" onclick="deleteStudentActivity(${b.id})"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+    
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  // RENDER ROWS HELPER
+  function renderCatalogRows(booksArray) {
+    const tbody = document.getElementById('catalogTbody');
+    if (!booksArray || booksArray.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px; font-size:14px;"><i class="fa-solid fa-circle-exclamation"></i> No matching book found in inventory!</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = booksArray.map(b => `
+      <tr>
+        <td><img src="${b.cover_image}" style="width:40px; height:55px; object-fit:cover; border-radius:4px;"></td>
+        <td><strong style="color:#00f2fe;">${b.book_id}</strong></td>
+        <td><strong>${b.title}</strong><br><small style="color:var(--text-muted);">${b.author}</small></td>
+        <td><span class="badge" style="background:rgba(0,242,254,0.15); color:#00f2fe;">${b.category || 'General'}</span></td>
+        <td><strong>${b.available_copies}</strong> / ${b.total_copies}</td>
+        <td><input type="number" id="borrow_days_${b.book_id}" value="7" min="1" max="90" style="width:65px; padding:4px; font-size:12px; text-align:center;"> Days</td>
+        <td>
+          <button class="btn btn-primary" style="padding:5px 12px; font-size:11.5px; background:linear-gradient(135deg,#0072ff,#00f2fe);" onclick="issueWithDays('${b.book_id}')">
+            ${b.available_copies > 0 ? 'Issue' : 'Queue'}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // REAL-TIME INSTANT SEARCH ENGINE (FIXED FOR BK-108, TITLES, AUTHORS)
+  function filterCatalogNow() {
+    const input = document.getElementById('catalogSearch');
+    if (!input) return;
+    const query = input.value.trim().toLowerCase();
+
+    if (!query) {
+      renderCatalogRows(globalBooksList);
+      return;
+    }
+
+    const filtered = globalBooksList.filter(book => {
+      const bId = (book.book_id || '').toLowerCase();
+      const bTitle = (book.title || '').toLowerCase();
+      const bAuthor = (book.author || '').toLowerCase();
+      const bCat = (book.category || '').toLowerCase();
+      
+      return bId.includes(query) || 
+             bTitle.includes(query) || 
+             bAuthor.includes(query) || 
+             bCat.includes(query);
+    });
+
+    renderCatalogRows(filtered);
+  }
+
+  async function returnBook(tx_id, book_id) {
+    if (!confirm('Are you sure you want to return this book?')) return;
+    const res = await fetch('/api/books/return', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transaction_id: tx_id, book_id })
+    });
+    const d = await res.json();
+    alert(d.message);
+    loadStudentData();
+  }
+
+  async function issueWithDays(book_id) {
+    const daysInput = document.getElementById(`borrow_days_${book_id}`);
+    const borrow_days = daysInput ? daysInput.value : 7;
+
+    const res = await fetch('/api/books/issue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: user.student_id, book_id, borrow_days })
+    });
+    const d = await res.json();
+    alert(d.message || 'Book issued successfully!');
+    loadStudentData();
+  }
+
+  // CHAT SYSTEM
+  async function loadStudentChat(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    const res = await fetch(`/api/chat/messages?student_id=${user.student_id}`);
+    const messages = await res.json();
+    const box = document.getElementById('studentChatBox');
+
+    if (messages.length === 0) {
+      box.innerHTML = `<div style="color:var(--text-muted); text-align:center; margin-top:20px;">No messages yet. Send a message to chat with Admin!</div>`;
+    } else {
+      box.innerHTML = messages.map(m => `
+        <div style="align-self:${m.sender_role === 'STUDENT' ? 'flex-end' : 'flex-start'}; max-width:70%; background:${m.sender_role === 'STUDENT' ? 'linear-gradient(135deg,#7928ca,#b366ff)' : 'rgba(255,255,255,0.12)'}; padding:10px 14px; border-radius:12px;">
+          <strong style="color:${m.sender_role === 'STUDENT' ? '#fff' : '#00f2fe'}; font-size:12px;">${m.sender_name} (${m.sender_role})</strong>
+          <p style="color:#fff; margin:4px 0 2px 0; font-size:13.5px;">${m.message}</p>
+          <small style="color:${m.sender_role === 'STUDENT' ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)'}; font-size:10px;">${new Date(m.created_at).toLocaleTimeString()}</small>
+        </div>
+      `).join('');
+    }
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  async function sendStudentGrievance() {
+    const inputEl = document.getElementById('studentMsgInput');
+    const msg = inputEl.value.trim();
+    if (!msg) return;
+
+    await fetch('/api/chat/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        student_id: user.student_id,
+        sender_role: 'STUDENT',
+        sender_name: user.name || user.student_id,
+        message: msg
+      })
+    });
+    inputEl.value = '';
+    loadStudentChat();
+    inputEl.focus();
+  }
+
+  async function clearStudentChat() {
+    if (confirm('Clear your conversation with the library admin?')) {
+      await fetch(`/api/chat/messages/all?student_id=${user.student_id}`, { method: 'DELETE' });
+      loadStudentChat();
+    }
+  }
+
+  // OFFERS COUNTDOWN
+  async function loadStudentFestivalOffers(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    if (offersInterval) clearInterval(offersInterval);
+
+    const res = await fetch('/api/membership/offers');
+    const offers = await res.json();
+    const grid = document.getElementById('studentOffersGrid');
+    if (offers.length === 0) {
+      grid.innerHTML = `<div style="color:var(--text-muted); padding:10px;">No festival celebration offers currently active. Check back soon!</div>`;
+    } else {
+      function renderOffers() {
+        grid.innerHTML = offers.map(o => {
+          let timerDisplay = 'Open Special Pass';
+          if (o.expire_at) {
+            const diff = new Date(o.expire_at) - new Date();
+            if (diff <= 0) {
+              timerDisplay = `<span style="color:#ff3b30; font-weight:800;">OFFER EXPIRED</span>`;
+            } else {
+              const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+              const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+              const m = Math.floor((diff / (1000 * 60)) % 60);
+              const s = Math.floor((diff / 1000) % 60);
+              timerDisplay = `Expires in: ${d}d ${h}h ${m}m ${s}s`;
+            }
+          }
+
+          return `
+            <div class="fest-card">
+              <span class="badge" style="background:#ff007f; color:#fff; font-weight:800; font-size:12px; letter-spacing:1px;">🎉 ${o.festival_tag || 'FESTIVAL SPECIAL'}</span>
+              <h3 style="color:#fff; margin-top:10px; font-size:18px;">${o.offer_name}</h3>
+              <p style="font-size:13px; color:var(--text-muted);">${o.days} Days (${o.duration_type}) Membership</p>
+              <h2 style="color:#00ff87; margin:8px 0; font-size:26px;">₹${o.price}</h2>
+              <div class="countdown-timer-box">
+                <i class="fa-regular fa-clock"></i> ${timerDisplay}
+              </div>
+              <button class="btn btn-wa" style="width:100%; padding:10px; font-weight:800;" onclick="selectOfferToPay('${o.offer_name}', ${o.price})">
+                <i class="fa-solid fa-bolt"></i> Claim & Pay ₹${o.price}
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      renderOffers();
+      offersInterval = setInterval(renderOffers, 1000);
+    }
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  function selectOfferToPay(name, price) {
+    openTab('feePaymentSec');
+    document.getElementById('pay_fee_type').value = 'Membership Plan Renewal';
+    document.getElementById('pay_amount').value = price;
+    updateDynamicQr();
+    alert(`Festival Pass Claimed: ${name} (₹${price}). Scan QR to complete payment.`);
+  }
+
+  async function loadFeesNotices(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    const res = await fetch(`/api/notices?student_id=${encodeURIComponent(user.student_id)}`);
+    const notices = await res.json();
+    const container = document.getElementById('feesNoticeContainer');
+    const myFeeNotices = notices.filter(n => n.notice_type === 'FEE' && (n.recipient_student_id === user.student_id || !n.recipient_student_id));
+
+    if (myFeeNotices.length === 0) {
+      container.innerHTML = `<div style="background:rgba(40,167,69,0.15); border:1px solid #28a745; padding:15px; border-radius:10px; color:#4cd964;"><i class="fa-solid fa-circle-check"></i> Great news! You have no outstanding fees or fine notices.</div>`;
+    } else {
+      container.innerHTML = myFeeNotices.map(n => `
+        <div style="background:rgba(255,59,48,0.15); border:1px solid #ff3b30; padding:16px; border-radius:12px; border-left:4px solid #ff3b30;">
+          <strong style="color:#ff5277; font-size:15px;"><i class="fa-solid fa-bell"></i> ${n.title}</strong><span style="float:right;background:rgba(0,242,254,.12);color:#00f2fe;border:1px solid rgba(0,242,254,.25);padding:3px 7px;border-radius:999px;font-size:9px;">STUDENT-SPECIFIC</span>
+          <p style="color:#fff; margin:6px 0; font-size:14px; line-height:1.6; white-space:pre-line;">${n.message}</p>
+          <small style="color:var(--text-muted);">${new Date(n.created_at).toLocaleString()}</small>
+        </div>
+      `).join('');
+    }
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  async function loadAllNotices(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    const res = await fetch('/api/notices');
+    const notices = await res.json();
+    document.getElementById('noticeContainer').innerHTML = notices.map(n => `
+      <div style="background:rgba(4, 15, 36, 0.7); border-left:3px solid #00f2fe; padding:14px; border-radius:10px;">
+        <strong style="color:#00f2fe; font-size:15px;">${n.title}</strong>
+        <p style="color:#fff; margin:6px 0; font-size:13.5px; white-space:pre-line;">${n.message}</p>
+        <small style="color:var(--text-muted);">${new Date(n.created_at).toLocaleString()}</small>
+      </div>
+    `).join('');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  async function loadMyActivities(btn) {
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    const res = await fetch(`/api/student/my-activities/${user.student_id}`);
+    const data = await res.json();
+    const list = document.getElementById('myPersonalActivityList');
+    if (data.length === 0) {
+      list.innerHTML = `<li style="color:var(--text-muted); padding:10px;">No personal activities recorded yet.</li>`;
+    } else {
+      list.innerHTML = data.map(act => `
+        <li style="background:rgba(0,0,0,0.3); border:1px solid rgba(0,242,254,0.2); padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span class="badge ${act.status === 'ISSUED' ? 'badge-issued' : 'badge-fifo'}">${act.status}</span>
+            <strong style="color:#fff; margin-left:6px;">"${act.book_title || act.book_id}"</strong>
+            <small style="color:var(--text-muted); display:block; margin-top:4px;">Expected Return: ${act.expected_return ? new Date(act.expected_return).toLocaleDateString() : 'N/A'}</small>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <small style="color:#00f2fe;">${new Date(act.created_at || Date.now()).toLocaleDateString()}</small>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:10px;" onclick="deleteStudentActivity(${act.id})"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </li>
+      `).join('');
+    }
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+  }
+
+  async function deleteStudentActivity(id) {
+    if (confirm('Delete this entry?')) {
+      await fetch(`/api/transactions/${id}`, { method: 'DELETE' });
+      loadMyActivities();
+      loadStudentData();
+    }
+  }
+
+  async function clearAllMyActivities() {
+    if (confirm('Clear all your completed personal activity stream logs?')) {
+      await fetch(`/api/student/my-activities/all/${user.student_id}`, { method: 'DELETE' });
+      loadMyActivities();
+    }
+  }
+
+  async function loadOutstandingFees(){
+    const sel=document.getElementById('pay_fee_type');
+    const res=await fetch(`/api/student/outstanding-fees/${user.student_id}`); const items=await res.json();
+    if(!res.ok) return alert(items.error||'Unable to load outstanding fees.');
+    sel.innerHTML=items.map(i=>`<option value="${i.fee_type}" data-tx="${i.transaction_id||''}" data-fine-id="${i.fine_id||''}" data-amount="${i.amount}" data-reason="${encodeURIComponent(i.reason||'')}" >${i.fee_type} — ${i.book_title||i.book_id||'Library Fine'} — ₹${i.amount}${i.days_late?` (${i.days_late} days late)`:''}</option>`).join('') + '<option value="Membership Plan Renewal" data-tx="" data-fine-id="" data-amount="50">Membership Plan Renewal — ₹50</option>';
+    updateDynamicQr();
+  }
+
+  function updateDynamicQr() {
+    const sel=document.getElementById('pay_fee_type'); const opt=sel.options[sel.selectedIndex];
+    if(opt && opt.dataset.amount) document.getElementById('pay_amount').value=opt.dataset.amount;
+    const amt=document.getElementById('pay_amount').value||50;
+    const selectedReason=opt?.dataset?.reason ? decodeURIComponent(opt.dataset.reason) : '';
+    const noteText=`${document.getElementById('pay_fee_type').value} • ${user.student_id}${selectedReason?` • ${selectedReason}`:''}`;
+    const upiUri = `upi://pay?pa=aman730988-1@oksbi&pn=Library%20Admin&am=${amt}&tn=${encodeURIComponent(noteText)}&cu=INR`;
+    document.getElementById('dynamicUpiQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}`;
+  }
+
+  async function submitUtrPayment() {
+    const utr = document.getElementById('pay_utr').value.trim();
+    const amount = document.getElementById('pay_amount').value;
+    const fee_type = document.getElementById('pay_fee_type').value;
+    const opt=document.getElementById('pay_fee_type').options[document.getElementById('pay_fee_type').selectedIndex];
+    const transaction_id=opt?.dataset?.tx || null;
+    const fine_id=opt?.dataset?.fineId || null;
+    const membership=!transaction_id && !fine_id && fee_type==='Membership Plan Renewal';
+    if (!utr) return alert('Enter valid 12-digit UTR!');
+
+    const res = await fetch('/api/payments/submit-utr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: user.student_id, fee_type, amount, utr_number: utr, transaction_id, fine_id, membership })
+    });
+    const d = await res.json();
+    if (!res.ok) return alert(d.error);
+
+    alert('Payment Confirmed!');
+    fillReceiptSlip({
+      receipt_id: d.receipt_id, student_id: user.student_id, student_name: user.name,
+      fee_type: d.details?.fee_type || fee_type,
+      book_title: d.details?.book_title || (membership ? 'Membership Plan' : '--'),
+      amount, utr_number: utr, payment_date: d.payment_date || new Date().toISOString(),
+      days_late: d.details?.days_late || 0, issue_date: d.details?.issue_date, expected_return: d.details?.expected_return
+    });
+    loadOutstandingFees(); loadPermanentReceipts();
+  }
+
+  async function loadPermanentReceipts() {
+    const res = await fetch(`/api/payments/receipts/${user.student_id}`);
+    const data = await res.json();
+    const container = document.getElementById('permanentReceiptsList');
+    container.innerHTML = data.map(r => `
+      <div style="background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:8px; border-left:3px solid #00ff87; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <strong style="color:#00ff87;">₹${r.amount}</strong> - <span style="font-size:12px;">${r.fee_type}</span><br>
+          <small style="color:var(--text-muted); font-family:monospace;">UTR: ${r.utr_number} ${r.days_late ? `| ${r.days_late} days late` : ''}</small>
+        </div>
+        <button class="btn btn-wa" style="padding:3px 8px; font-size:10px;" onclick="viewPastReceipt(decodeURIComponent('${encodeURIComponent(r.fee_type || '')}'), '${Number(r.amount || 0)}', decodeURIComponent('${encodeURIComponent(r.utr_number || '')}'), '${encodeURIComponent(r.payment_date || '')}', decodeURIComponent('${encodeURIComponent(r.details_json || '')}'), ${Number(r.id || 0)})">View Slip</button>
+      </div>
+    `).join('');
+  }
+
+  function parseServerDate(v) {
+    if (!v) return null;
+    if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
+    const raw = String(v).trim();
+    if (!raw) return null;
+    let d;
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(raw)) d = new Date(raw.replace(' ','T'));
+    else d = new Date(raw);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function fmtIndia(v) {
+    const d = parseServerDate(v);
+    return d ? new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(d) + ' IST' : '--';
+  }
+  function dateOnlyIndia(v) {
+    const d = parseServerDate(v);
+    return d ? new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'2-digit',year:'numeric'}).format(d) : '--';
+  }
+
+  function fillReceiptSlip(r) {
+    const fmt = fmtIndia;
+    const dateOnly = dateOnlyIndia;
+    document.getElementById('receiptPlaceholder').style.display = 'none';
+    document.getElementById('printableSlipCard').style.display = 'block';
+    document.getElementById('rReceiptNo').innerText = r.receipt_id ? `LMS-${String(r.receipt_id).padStart(6,'0')}` : 'LMS-VERIFIED';
+    document.getElementById('rStudentName').innerText = r.student_name || user.name || '--';
+    document.getElementById('rStuId').innerText = r.student_id || user.student_id || '--';
+    document.getElementById('rAvatar').innerText = (r.student_name || user.name || 'S').trim().charAt(0).toUpperCase();
+    document.getElementById('rType').innerText = r.fee_type || '--';
+    document.getElementById('rBook').innerText = r.book_title || '--';
+    document.getElementById('rAmount').innerText = '₹' + Number(r.amount || 0).toFixed(2);
+    document.getElementById('rLateDays').innerText = Number(r.days_late || 0);
+    document.getElementById('rIssueDate').innerText = dateOnly(r.issue_date);
+    document.getElementById('rDueDate').innerText = dateOnly(r.expected_return);
+    document.getElementById('rUtr').innerText = r.utr_number || r.utr || '--';
+    document.getElementById('rDate').innerText = fmt(r.payment_date);
+  }
+
+  function viewPastReceipt(fee_type, amount, utr, date, detailsJson, receiptId) {
+    let details = {}; try { details = detailsJson ? JSON.parse(detailsJson) : {}; } catch (_) {}
+    fillReceiptSlip({ receipt_id: receiptId, student_id: user.student_id, student_name: user.name,
+      fee_type: details.fee_type || fee_type, book_title: details.book_title || (fee_type === 'Membership Plan Renewal' ? 'Membership Plan' : '--'),
+      amount, utr_number: utr, payment_date: date, days_late: details.days_late || 0,
+      issue_date: details.issue_date, expected_return: details.expected_return });
+  }
+
+  function printOnlyFeeSlipDirect() {
+    const slip = document.getElementById('printableSlipCard').cloneNode(true);
+    const printBtn = slip.querySelector('button');
+    if (printBtn) printBtn.remove();
+
+    const frame = document.getElementById('printReceiptFrame');
+    const doc = frame.contentWindow.document;
+    doc.open();
+    doc.write(`
+      <html>
+        <head>
+          <title>Official LMS Invoice Slip</title>
+          <style>
+            *{box-sizing:border-box;}
+            body{font-family:Segoe UI,Arial,sans-serif;display:flex;justify-content:center;padding:28px 12px;margin:0;background:#f5f7fb;color:#0b1528;}
+            .receipt-slip-hologram{border:2px solid #0072ff;border-radius:20px;padding:22px;max-width:460px;width:100%;text-align:center;background:#fff;color:#0b1528;box-shadow:0 12px 40px rgba(0,70,160,.18);}
+            .receipt-topline{display:flex;justify-content:space-between;gap:10px;font-size:9px;color:#64748b;font-weight:800;letter-spacing:.7px;}
+            .receipt-brand-mark{width:42px;height:42px;margin:10px auto 6px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#0072ff,#00c6ff);color:#fff;font-size:22px;}
+            .receipt-brand-title{margin:0;font-size:20px;letter-spacing:1.2px;} .receipt-subtitle{color:#0072ff;font-size:10px;font-weight:800;letter-spacing:1px;margin-top:3px;}
+            .receipt-paid-badge{display:inline-block;margin:12px auto 14px;padding:5px 11px;border-radius:999px;background:#e9fff5;color:#07935d;font-size:9px;font-weight:900;letter-spacing:.6px;}
+            .receipt-student-box{display:flex;align-items:center;justify-content:center;gap:12px;padding:11px;background:#f3f8ff;border:1px solid #d6e8ff;border-radius:14px;text-align:left;}
+            .receipt-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#0b1528;color:#00c6ff;font-weight:900;font-size:18px;}
+            .receipt-label{font-size:8px;color:#64748b;font-weight:800;letter-spacing:.8px;} .receipt-student-box strong{display:block;font-size:15px;} .receipt-student-box span{display:block;color:#0072ff;font:700 10px monospace;margin-top:2px;}
+            .receipt-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;text-align:left;} .receipt-detail-grid>div{padding:9px;border:1px solid #e5eaf2;border-radius:10px;background:#fafcff;}
+            .receipt-detail-grid span,.receipt-meta-row span{display:block;font-size:8px;color:#64748b;font-weight:800;letter-spacing:.6px;margin-bottom:3px;} .receipt-detail-grid strong{display:block;font-size:11px;color:#0b1528;word-break:break-word;}
+            .receipt-amount{color:#07935d!important;font-size:16px!important;} .receipt-meta-row{display:flex;justify-content:space-between;gap:10px;padding:8px 2px;border-bottom:1px dashed #cbd5e1;text-align:left;} .receipt-meta-row strong{font-size:10px;text-align:right;word-break:break-all;} .receipt-thanks{margin:14px 0 4px;font-size:9px;color:#64748b;}
+          </style>
+        </head>
+        <body>
+          ${slip.outerHTML}
+        </body>
+      </html>
+    `);
+    doc.close();
+    setTimeout(() => {
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+    }, 400);
+  }
+
+  async function changeStudentPassword() {
+    const curEl = document.getElementById('cur_pass');
+    const nPassEl = document.getElementById('new_pass');
+    const cur = curEl.value.trim();
+    const nPass = nPassEl.value.trim();
+
+    if (!cur || !nPass) return alert('Enter both current and new password!');
+    
+    try {
+      const res = await fetch('/api/student/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id: user.student_id, current_password: cur, new_password: nPass })
+      });
+      const d = await res.json();
+      if (!res.ok) return alert(d.error || 'Password update failed!');
+      
+      alert(d.message || 'Password updated successfully!');
+      rawStudentPassword = nPass;
+      curEl.value = '';
+      nPassEl.value = '';
+    } catch(err) {
+      alert('Error updating password: ' + err.message);
+    }
+  }
+
+  loadStudentData();
+</script>
+</body>
+</html>
